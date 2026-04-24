@@ -421,6 +421,40 @@
     [data-theme="light"] .card-list-item { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.08); }
     [data-theme="light"] .add-card-divider { background: rgba(0,0,0,0.08); }
     [data-theme="light"] .card-type-sel { color-scheme: light; }
+
+    /* SELECT OPTION CONTRAST */
+    .card-type-sel option, .edit-select option { background: #1c1c1e; color: #fff; }
+    [data-theme="light"] .card-type-sel option, [data-theme="light"] .edit-select option { background: #f0ece0; color: #1A1612; }
+
+    /* CATEGORIES MODAL (same structure as cards) */
+    .cats-modal { padding: 24px 26px; width: 460px; max-width: calc(100vw - 32px); max-height: 80vh; overflow-y: auto; }
+
+    /* DEFAULT CARD STAR */
+    .card-list-default { width: 26px; height: 26px; border-radius: 7px; border: none; background: transparent; color: var(--text-3); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s, color .15s; flex-shrink: 0; }
+    .card-list-default:hover { color: #ffd60a; }
+    .card-list-default.active { color: #ffd60a; }
+
+    /* EXPORT MODAL */
+    .export-modal { padding: 24px 26px; width: 480px; max-width: calc(100vw - 32px); }
+    .export-section-label { font-size: 11px; font-weight: 500; color: var(--text-3); letter-spacing: .07em; text-transform: uppercase; margin: 16px 0 8px; }
+    .export-section-label:first-child { margin-top: 0; }
+    .export-period-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .export-period-btn { padding: 8px 12px; border-radius: 10px; border: 0.5px solid rgba(255,255,255,.1); background: rgba(255,255,255,.05); color: var(--text-2); font-family: inherit; font-size: 12px; cursor: pointer; transition: background .15s, border-color .15s, color .15s; text-align: left; }
+    .export-period-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+    .export-period-btn.active { border-color: rgba(var(--accent-rgb),.5); background: rgba(var(--accent-rgb),.1); color: var(--text); }
+    .export-fields-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .export-field-label { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px; border: 0.5px solid rgba(255,255,255,.1); background: rgba(255,255,255,.05); font-size: 12px; cursor: pointer; transition: background .15s; user-select: none; }
+    .export-field-label:hover { background: rgba(255,255,255,.09); }
+    .export-field-label input { accent-color: var(--accent); }
+    .export-fmt-row { display: flex; gap: 8px; }
+    .export-fmt-btn { flex: 1; padding: 10px; border-radius: 10px; border: 0.5px solid rgba(255,255,255,.1); background: rgba(255,255,255,.05); color: var(--text-2); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: background .15s, border-color .15s, color .15s; }
+    .export-fmt-btn.active { border-color: rgba(var(--accent-rgb),.5); background: rgba(var(--accent-rgb),.1); color: var(--text); }
+    .export-do-btn { width: 100%; margin-top: 20px; height: 44px; border-radius: 12px; border: none; background: var(--accent); color: #000; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity .2s; }
+    .export-do-btn:hover { opacity: .88; }
+    [data-theme="light"] .export-period-btn { border-color: rgba(0,0,0,.1); background: rgba(0,0,0,.04); }
+    [data-theme="light"] .export-period-btn.active { background: rgba(var(--accent-rgb),.12); }
+    [data-theme="light"] .export-field-label { border-color: rgba(0,0,0,.1); background: rgba(0,0,0,.04); }
+    [data-theme="light"] .export-fmt-btn { border-color: rgba(0,0,0,.1); background: rgba(0,0,0,.04); }
   </style>
 </head>
 <body>
@@ -449,9 +483,17 @@
       <h1 class="page-title">Saldo &<br>gastos.</h1>
     </div>
     <div class="header-right">
+      <button class="comp-open-btn" id="cats-settings-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        Categorias
+      </button>
       <button class="comp-open-btn" id="cards-settings-btn">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
         Cartões
+      </button>
+      <button class="comp-open-btn" id="export-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Exportar
       </button>
       <button class="comp-open-btn" id="comp-open">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
@@ -692,6 +734,60 @@
   </div>
 </div>
 
+<!-- CATEGORIES SETTINGS MODAL -->
+<div class="edit-backdrop" id="cats-backdrop">
+  <div class="glass-card cats-modal" id="cats-modal">
+    <div class="cards-modal-header">
+      <span class="cards-modal-title">Categorias personalizadas</span>
+      <button class="cards-modal-close" id="cats-modal-close"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div style="font-size:11px;color:var(--text-3);margin-bottom:14px">As categorias padrão (Alimentação, Transporte, etc.) não podem ser removidas. Adicione categorias extras aqui.</div>
+    <div class="card-list" id="cat-custom-list"></div>
+    <div class="add-card-divider"></div>
+    <div class="add-card-subtitle">Nova categoria</div>
+    <div class="add-card-row">
+      <input class="field card-name-field" id="new-cat-name" type="text" placeholder="Nome (ex: Investimentos)" autocomplete="off">
+      <div class="color-wrap" id="cat-color-wrap">
+        <input type="color" id="new-cat-color" value="#5ac8fa">
+        <div class="color-preview" id="cat-color-preview" style="background:#5ac8fa"></div>
+      </div>
+      <button class="add-btn" id="add-cat-btn" style="height:42px;padding:0 16px;font-size:12px">Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="edit-backdrop" id="export-backdrop">
+  <div class="glass-card export-modal" id="export-modal">
+    <div class="cards-modal-header">
+      <span class="cards-modal-title">Exportar dados</span>
+      <button class="cards-modal-close" id="export-modal-close"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="export-section-label">Período</div>
+    <div class="export-period-grid" id="export-period-grid">
+      <button class="export-period-btn active" data-period="current">Mês atual</button>
+      <button class="export-period-btn" data-period="last3">Últimos 3 meses</button>
+      <button class="export-period-btn" data-period="last6">Últimos 6 meses</button>
+      <button class="export-period-btn" data-period="all">Todo o histórico</button>
+    </div>
+    <div class="export-section-label">Campos</div>
+    <div class="export-fields-grid">
+      <label class="export-field-label"><input type="checkbox" id="exp-date" checked> Data</label>
+      <label class="export-field-label"><input type="checkbox" id="exp-desc" checked> Descrição</label>
+      <label class="export-field-label"><input type="checkbox" id="exp-amount" checked> Valor (R$)</label>
+      <label class="export-field-label"><input type="checkbox" id="exp-cat" checked> Categoria</label>
+      <label class="export-field-label"><input type="checkbox" id="exp-card" checked> Cartão</label>
+    </div>
+    <div class="export-section-label">Formato</div>
+    <div class="export-fmt-row">
+      <button class="export-fmt-btn active" data-fmt="xlsx">Excel (.xlsx)</button>
+      <button class="export-fmt-btn" data-fmt="csv">CSV (.csv)</button>
+      <button class="export-fmt-btn" data-fmt="txt">Texto (.txt)</button>
+    </div>
+    <button class="export-do-btn" id="export-do-btn">Gerar arquivo</button>
+  </div>
+</div>
+
 <!-- CARDS SETTINGS MODAL -->
 <div class="edit-backdrop" id="cards-backdrop">
   <div class="glass-card cards-modal" id="cards-modal">
@@ -751,7 +847,7 @@ document.addEventListener('DOMContentLoaded', updateThemeIcon);
 /* ═══════════════════════════════════════
    CATEGORIES
 ═══════════════════════════════════════ */
-const CATS = {
+let CATS = {
   alimentação: {
     label:'Alimentação', color:'#ff9f0a',
     keywords:['lanche','almoço','jantar','café','cafezinho','pizza','burger','hamburguer','delivery','ifood','rappi','uber eats','mercado','supermercado','restaurante','sushi','padaria','açaí','sorvete','fast food','mcdonalds','mcdonald','subway','starbucks','comida','bebida','bar','cerveja','vinho','churrasco','lanchonete','feira','hortifruti','pão','leite','frango','carne','salada','sanduíche','wrap','tapioca','crepe','pastel','esfiha','kibe','refri','refrigerante','suco','smoothie','doceria','bistrô','boteco','petisco','açougue','peixaria','empada','choperia'],
@@ -814,6 +910,7 @@ const sb = supabase.createClient(
 );
 let _txns = [];
 let _cartoes = [];
+let _customCats = [];
 let selectedCard = null;
 let currentMonth = new Date().getMonth(), currentYear = new Date().getFullYear();
 let manualCat = null, activeFilter = null, hoveredSeg = null, donutSegs = [], editingId = null;
@@ -829,6 +926,9 @@ let cachedBycat = {}, cachedTotal = 0;
 ═══════════════════════════════════════ */
 const loadAll = () => _txns;
 const fmtBRL   = v  => v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+const isLight  = () => document.documentElement.getAttribute('data-theme') === 'light';
+const cvTxt    = (a) => isLight() ? `rgba(26,22,18,${a})` : `rgba(255,255,255,${a})`;
+const cvBg     = (a) => isLight() ? `rgba(0,0,0,${a})`    : `rgba(255,255,255,${a})`;
 const fmtDate  = d  => { const [,m,day] = d.split('-'); return `${day}/${m}`; };
 const DPR      = window.devicePixelRatio || 1;
 const strip    = s  => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -1154,6 +1254,9 @@ function buildCardsList() {
       <div class="card-list-dot" style="background:${c.cor}"></div>
       <span class="card-list-name">${c.nome}</span>
       <span class="card-list-type">${CARD_TYPES[c.tipo]?.label||c.tipo}</span>
+      <button class="card-list-default ${c.is_default?'active':''}" data-default="${c.id}" title="${c.is_default?'Cartão padrão':'Definir como padrão'}">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="${c.is_default?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/></svg>
+      </button>
       <button class="card-list-del" data-del="${c.id}">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
@@ -1205,16 +1308,166 @@ document.getElementById('add-card-btn').addEventListener('click', async () => {
 });
 
 document.getElementById('card-list').addEventListener('click', async e => {
-  const btn = e.target.closest('[data-del]');
+  const delBtn = e.target.closest('[data-del]');
+  if (delBtn) {
+    const id = delBtn.dataset.del;
+    _cartoes = _cartoes.filter(c => c.id !== id);
+    if (selectedCard === id) setSelectedCard(null);
+    buildCardsList(); buildCardDropdown(); buildEditCardSelect(); render();
+    await sb.from('cartoes').delete().eq('id', id);
+    return;
+  }
+  const defBtn = e.target.closest('[data-default]');
+  if (defBtn) {
+    const id = defBtn.dataset.default;
+    const wasDefault = _cartoes.find(c => c.id === id)?.is_default;
+    _cartoes = _cartoes.map(c => ({ ...c, is_default: !wasDefault && c.id === id }));
+    buildCardsList(); buildCardDropdown();
+    for (const c of _cartoes) {
+      await sb.from('cartoes').update({ is_default: c.is_default }).eq('id', c.id);
+    }
+  }
+});
+
+/* ═══════════════════════════════════════
+   CUSTOM CATEGORIES
+═══════════════════════════════════════ */
+const CUSTOM_CAT_ICON = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/></svg>';
+
+function mergeCats() {
+  const builtinKeys = ['alimentação','transporte','viagens','compras','saúde','lazer','moradia','outros'];
+  for (const k of Object.keys(CATS)) {
+    if (!builtinKeys.includes(k)) delete CATS[k];
+  }
+  for (const c of _customCats) {
+    CATS[c.id] = { label: c.label, color: c.color, keywords: [], icon: CUSTOM_CAT_ICON };
+  }
+}
+
+function buildCatCustomList() {
+  const list = document.getElementById('cat-custom-list');
+  if (!_customCats.length) { list.innerHTML = '<div class="card-list-empty">Nenhuma categoria personalizada ainda.</div>'; return; }
+  list.innerHTML = _customCats.map(c => `
+    <div class="card-list-item">
+      <div class="card-list-dot" style="background:${c.color}"></div>
+      <span class="card-list-name">${c.label}</span>
+      <button class="card-list-del" data-catdel="${c.id}">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>`).join('');
+}
+
+document.getElementById('cats-settings-btn').addEventListener('click', () => {
+  buildCatCustomList();
+  document.getElementById('cats-backdrop').classList.add('open');
+});
+document.getElementById('cats-modal-close').addEventListener('click', () => document.getElementById('cats-backdrop').classList.remove('open'));
+document.getElementById('cats-backdrop').addEventListener('click', e => { if (e.target===e.currentTarget) document.getElementById('cats-backdrop').classList.remove('open'); });
+document.getElementById('cats-modal').addEventListener('click', e => e.stopPropagation());
+
+document.getElementById('new-cat-color').addEventListener('input', function() {
+  document.getElementById('cat-color-preview').style.background = this.value;
+});
+
+document.getElementById('add-cat-btn').addEventListener('click', async () => {
+  const label = document.getElementById('new-cat-name').value.trim();
+  if (!label) return;
+  const color = document.getElementById('new-cat-color').value;
+  const cat = { id: 'custom_' + Date.now(), label, color, criado_em: Date.now() };
+  _customCats.push(cat);
+  document.getElementById('new-cat-name').value = '';
+  mergeCats(); buildCatCustomList(); buildCatDropdown(); render();
+  await sb.from('categorias_custom').insert(cat);
+});
+
+document.getElementById('cat-custom-list').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-catdel]');
   if (!btn) return;
-  const id = btn.dataset.del;
-  _cartoes = _cartoes.filter(c => c.id !== id);
-  if (selectedCard === id) setSelectedCard(null);
-  buildCardsList();
-  buildCardDropdown();
-  buildEditCardSelect();
-  render();
-  await sb.from('cartoes').delete().eq('id', id);
+  const id = btn.dataset.catdel;
+  _customCats = _customCats.filter(c => c.id !== id);
+  mergeCats(); buildCatCustomList(); buildCatDropdown(); render();
+  await sb.from('categorias_custom').delete().eq('id', id);
+});
+
+/* ═══════════════════════════════════════
+   EXPORT
+═══════════════════════════════════════ */
+let exportPeriod = 'current', exportFmt = 'xlsx';
+
+document.getElementById('export-btn').addEventListener('click', () => document.getElementById('export-backdrop').classList.add('open'));
+document.getElementById('export-modal-close').addEventListener('click', () => document.getElementById('export-backdrop').classList.remove('open'));
+document.getElementById('export-backdrop').addEventListener('click', e => { if (e.target===e.currentTarget) document.getElementById('export-backdrop').classList.remove('open'); });
+document.getElementById('export-modal').addEventListener('click', e => e.stopPropagation());
+
+document.getElementById('export-period-grid').addEventListener('click', e => {
+  const btn = e.target.closest('.export-period-btn');
+  if (!btn) return;
+  exportPeriod = btn.dataset.period;
+  document.querySelectorAll('.export-period-btn').forEach(b => b.classList.toggle('active', b===btn));
+});
+
+document.querySelectorAll('.export-fmt-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    exportFmt = btn.dataset.fmt;
+    document.querySelectorAll('.export-fmt-btn').forEach(b => b.classList.toggle('active', b===btn));
+  });
+});
+
+function getExportTxns() {
+  const now = new Date();
+  switch (exportPeriod) {
+    case 'current': { const p=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}`; return _txns.filter(t=>t.date.startsWith(p)); }
+    case 'last3':   { const d=new Date(now.getFullYear(),now.getMonth()-2,1); return _txns.filter(t=>t.date>=dateToISO(d)); }
+    case 'last6':   { const d=new Date(now.getFullYear(),now.getMonth()-5,1); return _txns.filter(t=>t.date>=dateToISO(d)); }
+    default:        return [..._txns];
+  }
+}
+
+document.getElementById('export-do-btn').addEventListener('click', async () => {
+  const txns = getExportTxns().sort((a,b)=>a.date.localeCompare(b.date));
+  const fields = {
+    date:   document.getElementById('exp-date').checked,
+    desc:   document.getElementById('exp-desc').checked,
+    amount: document.getElementById('exp-amount').checked,
+    cat:    document.getElementById('exp-cat').checked,
+    card:   document.getElementById('exp-card').checked
+  };
+  const rows = txns.map(t => {
+    const r = {};
+    if (fields.date)   r['Data']        = t.date;
+    if (fields.desc)   r['Descrição']   = t.description;
+    if (fields.amount) r['Valor (R$)']  = t.amount;
+    if (fields.cat)    r['Categoria']   = CATS[t.category]?.label || t.category;
+    if (fields.card)   r['Cartão']      = _cartoes.find(c=>c.id===t.cartao)?.nome || '';
+    return r;
+  });
+  if (!rows.length) { alert('Nenhum gasto encontrado para o período selecionado.'); return; }
+
+  if (exportFmt === 'xlsx') {
+    if (!window.XLSX) {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js';
+      document.head.appendChild(s);
+      await new Promise(res => s.onload = res);
+    }
+    const ws = window.XLSX.utils.json_to_sheet(rows);
+    const wb = window.XLSX.utils.book_new();
+    window.XLSX.utils.book_append_sheet(wb, ws, 'Gastos');
+    const fname = `gastos_${exportPeriod}_${new Date().toISOString().slice(0,10)}.xlsx`;
+    window.XLSX.writeFile(wb, fname);
+  } else {
+    const sep = exportFmt === 'csv' ? ',' : '\t';
+    const esc = v => exportFmt==='csv' ? `"${String(v).replace(/"/g,'""')}"` : String(v);
+    const headers = Object.keys(rows[0]).join(sep);
+    const lines = rows.map(r => Object.values(r).map(esc).join(sep));
+    const content = [headers, ...lines].join('\n');
+    const ext = exportFmt === 'csv' ? 'csv' : 'txt';
+    const blob = new Blob(['﻿'+content], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `gastos_${exportPeriod}_${new Date().toISOString().slice(0,10)}.${ext}`;
+    a.click();
+  }
 });
 
 document.addEventListener('click', closeAllPopups);
@@ -1312,7 +1565,7 @@ function drawDaily(txns) {
   const bW=Math.max(3,Math.floor(cW/maxDay)-2), step=cW/maxDay;
   for (let d=1;d<=maxDay;d++){
     const val=byDay[d]||0, x=PL+(d-.5)*step-bW/2;
-    ctx.fillStyle='rgba(255,255,255,.07)'; ctx.fillRect(x,PT+cH,bW,1);
+    ctx.fillStyle=cvBg(0.07); ctx.fillRect(x,PT+cH,bW,1);
     if (!val) continue;
     const bH=Math.max(3,(val/maxVal)*cH), y=PT+cH-bH;
     const isF=activeFilter&&!txns.filter(t=>parseInt(t.date.slice(8,10))===d).some(t=>t.category===activeFilter);
@@ -1322,7 +1575,7 @@ function drawDaily(txns) {
     ctx.lineTo(x+bW,y+bH); ctx.lineTo(x,y+bH); ctx.arcTo(x,y,x+rad,y,rad); ctx.closePath(); ctx.fill();
     ctx.globalAlpha=1;
   }
-  ctx.fillStyle='rgba(255,255,255,.2)'; ctx.font='10px -apple-system,sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle=cvTxt(0.35); ctx.font='10px -apple-system,sans-serif'; ctx.textAlign='center';
   const li=maxDay<=10?1:maxDay<=20?2:5;
   for (let d=1;d<=maxDay;d++) if (d%li===0||d===1||d===maxDay) ctx.fillText(d,PL+(d-.5)*step,lh-4);
 }
@@ -1353,7 +1606,7 @@ function drawCatComparison(bcA, bcB) {
     const cat=CATS[key];
     const y0=i*rowH+rowH/2;
     // label
-    ctx.fillStyle='rgba(255,255,255,.45)'; ctx.font=`500 10px -apple-system,sans-serif`;
+    ctx.fillStyle=cvTxt(0.5); ctx.font=`500 10px -apple-system,sans-serif`;
     ctx.textAlign='right'; ctx.fillText(cat.label,PL-8,y0+4);
     // A bar
     const wa=(bcA[key]||0)/maxVal*(lw-PL-PR);
@@ -1365,11 +1618,12 @@ function drawCatComparison(bcA, bcB) {
     ctx.beginPath(); ctx.roundRect(PL,y0+1,wb,barH,2); ctx.fill();
     ctx.globalAlpha=1;
   });
-  // legend — top-right, away from bars and labels
+  // legend
   const legX = lw - 72;
-  ctx.fillStyle='rgba(255,255,255,.75)'; ctx.fillRect(legX, 6, 14, 5);
-  ctx.fillStyle='rgba(255,255,255,.3)'; ctx.fillRect(legX, 15, 14, 5);
-  ctx.fillStyle='rgba(255,255,255,.55)'; ctx.font='9px -apple-system,sans-serif'; ctx.textAlign='left';
+  ctx.globalAlpha=0.8; ctx.fillStyle=cvTxt(1); ctx.fillRect(legX, 6, 14, 5);
+  ctx.globalAlpha=0.35; ctx.fillStyle=cvTxt(1); ctx.fillRect(legX, 15, 14, 5);
+  ctx.globalAlpha=1;
+  ctx.fillStyle=cvTxt(0.6); ctx.font='9px -apple-system,sans-serif'; ctx.textAlign='left';
   ctx.fillText(`A: ${MONTHS_SHORT[compMonthA]}`, legX+18, 12);
   ctx.fillText(`B: ${MONTHS_SHORT[compMonthB]}`, legX+18, 21);
 }
@@ -1398,11 +1652,11 @@ function drawTrend() {
     ctx.lineTo(x+bW,y+bH); ctx.lineTo(x,y+bH); ctx.arcTo(x,y,x+rad,y,rad); ctx.closePath(); ctx.fill();
     ctx.globalAlpha=1;
     // label
-    ctx.fillStyle=isA||isB?'rgba(255,255,255,.8)':'rgba(255,255,255,.3)';
+    ctx.fillStyle=isA||isB?cvTxt(0.85):cvTxt(0.35);
     ctx.font=`${isA||isB?'600 ':''}10px -apple-system,sans-serif`;
     ctx.textAlign='center'; ctx.fillText(MONTHS_SHORT[m.m],x+bW/2,lh-4);
-    if (isA) { ctx.fillStyle='rgba(48,209,88,.8)'; ctx.fillText('A',x+bW/2,lh-14); }
-    if (isB) { ctx.fillStyle='rgba(191,90,242,.8)'; ctx.fillText('B',x+bW/2,lh-14); }
+    if (isA) { ctx.fillStyle='rgba(48,209,88,.9)'; ctx.fillText('A',x+bW/2,lh-14); }
+    if (isB) { ctx.fillStyle='rgba(191,90,242,.9)'; ctx.fillText('B',x+bW/2,lh-14); }
   });
 }
 
@@ -1670,16 +1924,21 @@ document.getElementById('edit-desc').addEventListener('keydown',e=>{if(e.key==='
    INIT
 ═══════════════════════════════════════ */
 async function initFinancas() {
-  const [txnRes, cardRes] = await Promise.all([
+  const [txnRes, cardRes, catRes] = await Promise.all([
     sb.from('financas').select('*'),
-    sb.from('cartoes').select('*').order('criado_em')
+    sb.from('cartoes').select('*').order('criado_em'),
+    sb.from('categorias_custom').select('*').order('criado_em')
   ]);
-  _txns   = (txnRes.data  || []).map(r => ({ id: r.id, amount: r.valor, description: r.descricao, category: r.categoria, date: r.data, cartao: r.cartao||null }));
-  _cartoes = cardRes.data || [];
+  _txns      = (txnRes.data  || []).map(r => ({ id: r.id, amount: r.valor, description: r.descricao, category: r.categoria, date: r.data, cartao: r.cartao||null }));
+  _cartoes   = cardRes.data  || [];
+  _customCats = catRes.data  || [];
+  mergeCats();
   buildCatDropdown();
   buildCardDropdown();
   buildEditCardSelect();
   document.body.appendChild(document.getElementById('cal-popup'));
+  const defCard = _cartoes.find(c => c.is_default);
+  if (defCard) setSelectedCard(defCard.id);
   render();
 }
 initFinancas();
