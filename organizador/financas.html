@@ -367,6 +367,60 @@
       .comp-totals-row { grid-template-columns: 1fr; }
       .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
     }
+
+    /* CARD CHIP */
+    .card-chip { font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 8px; letter-spacing: .02em; }
+
+    /* CARD DROPDOWN */
+    .card-dropdown { padding: 6px; min-width: 210px; max-height: 280px; overflow-y: auto; }
+    .card-opt { width: 100%; padding: 8px 10px; border: none; background: transparent; color: var(--text); font-family: inherit; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 9px; border-radius: 9px; transition: background .15s; text-align: left; }
+    .card-opt:hover { background: rgba(255,255,255,.08); }
+    .card-opt.selected { background: rgba(255,255,255,.05); font-weight: 500; }
+    .card-opt-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .card-opt-check { margin-left: auto; opacity: 0; flex-shrink: 0; }
+    .card-opt.selected .card-opt-check { opacity: 1; }
+    [data-theme="light"] .card-opt:hover { background: rgba(0,0,0,0.06); }
+    [data-theme="light"] .card-opt.selected { background: rgba(0,0,0,0.04); }
+
+    /* CARD BREAKDOWN */
+    .card-breakdown-card { padding: 22px 24px; margin-bottom: 14px; }
+    .card-row-item { display: flex; align-items: center; gap: 12px; padding: 7px 10px; border-radius: 12px; }
+    .card-row-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .card-row-info { flex: 1; min-width: 0; }
+    .card-row-name { font-size: 12px; font-weight: 500; letter-spacing: -.01em; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+    .card-row-type { font-size: 10px; color: var(--text-3); }
+    .card-bar-bg { height: 2px; background: rgba(255,255,255,.08); border-radius: 2px; overflow: hidden; }
+    .card-bar-fill { height: 100%; border-radius: 2px; transition: width .4s cubic-bezier(.25,1,.5,1); }
+    .card-row-amount { font-size: 12px; font-weight: 600; letter-spacing: -.02em; flex-shrink: 0; }
+    .card-breakdown-empty { font-size: 12px; color: var(--text-3); text-align: center; padding: 16px 0; }
+    [data-theme="light"] .card-bar-bg { background: rgba(0,0,0,0.08); }
+
+    /* CARDS SETTINGS MODAL */
+    .cards-modal { padding: 24px 26px; width: 460px; max-width: calc(100vw - 32px); max-height: 80vh; overflow-y: auto; }
+    .cards-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .cards-modal-title { font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+    .cards-modal-close { width: 28px; height: 28px; border-radius: 50%; border: none; background: rgba(255,255,255,.08); color: var(--text-2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s; }
+    .cards-modal-close:hover { background: rgba(255,255,255,.14); color: var(--text); }
+    .card-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+    .card-list-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; background: rgba(255,255,255,.04); border: 0.5px solid rgba(255,255,255,.08); }
+    .card-list-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .card-list-name { flex: 1; font-size: 13px; font-weight: 500; }
+    .card-list-type { font-size: 11px; color: var(--text-3); margin-right: 4px; }
+    .card-list-del { width: 26px; height: 26px; border-radius: 7px; border: none; background: transparent; color: var(--text-3); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s, color .15s; flex-shrink: 0; }
+    .card-list-del:hover { background: rgba(255,59,48,.15); color: #ff3b30; }
+    .card-list-empty { font-size: 12px; color: var(--text-3); text-align: center; padding: 12px 0; }
+    .add-card-divider { height: 0.5px; background: rgba(255,255,255,.08); margin-bottom: 16px; }
+    .add-card-subtitle { font-size: 11px; font-weight: 500; color: var(--text-3); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 10px; }
+    .add-card-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .card-name-field { flex: 1; min-width: 120px; padding: 10px 12px; }
+    .card-type-sel { flex-shrink: 0; padding: 10px 12px; color-scheme: dark; cursor: pointer; border-radius: 12px; }
+    .color-wrap { position: relative; width: 42px; height: 42px; border-radius: 10px; border: 0.5px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .color-wrap input[type=color] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; border: none; }
+    .color-preview { width: 16px; height: 16px; border-radius: 50%; pointer-events: none; }
+    [data-theme="light"] .cards-modal-close { background: rgba(0,0,0,0.06); }
+    [data-theme="light"] .card-list-item { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.08); }
+    [data-theme="light"] .add-card-divider { background: rgba(0,0,0,0.08); }
+    [data-theme="light"] .card-type-sel { color-scheme: light; }
   </style>
 </head>
 <body>
@@ -395,6 +449,10 @@
       <h1 class="page-title">Saldo &<br>gastos.</h1>
     </div>
     <div class="header-right">
+      <button class="comp-open-btn" id="cards-settings-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Cartões
+      </button>
       <button class="comp-open-btn" id="comp-open">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
         Comparar
@@ -412,7 +470,7 @@
     <div class="add-form-row">
       <div style="position:relative;flex-shrink:0">
         <span class="input-prefix">R$</span>
-        <input class="field field-amount" id="f-amount" type="number" min="0" step="0.01" placeholder="0,00">
+        <input class="field field-amount" id="f-amount" type="text" inputmode="decimal" placeholder="0,00">
       </div>
       <input class="field field-desc" id="f-desc" type="text" placeholder="O que foi? Ex: lanche, uber, netflix…" autocomplete="off">
 
@@ -431,6 +489,15 @@
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         </div>
         <span id="csel-label">Auto</span>
+        <svg class="chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6,9 12,15 18,9"/></svg>
+      </button>
+
+      <!-- CARD BUTTON -->
+      <button class="icon-btn" id="card-select-btn" type="button">
+        <div class="icon-btn-icon" id="ccard-icon" style="background:rgba(255,255,255,.08)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <span id="ccard-label">Sem cartão</span>
         <svg class="chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6,9 12,15 18,9"/></svg>
       </button>
 
@@ -457,6 +524,7 @@
     <button class="cal-today-btn" id="cal-today-btn">Hoje</button>
   </div>
   <div class="float-popup cat-dropdown" id="cat-dropdown"></div>
+  <div class="float-popup card-dropdown" id="card-dropdown"></div>
 
   <!-- SUMMARY -->
   <div class="summary-row">
@@ -504,6 +572,12 @@
       <div class="daily-meta" id="daily-meta">—</div>
     </div>
     <canvas id="daily-canvas" height="110"></canvas>
+  </div>
+
+  <!-- CARD BREAKDOWN -->
+  <div class="glass-card card-breakdown-card" id="card-breakdown-wrap">
+    <div class="section-title">Por cartão</div>
+    <div id="card-rows"><div class="card-breakdown-empty">Nenhum cartão configurado ainda.</div></div>
   </div>
 
   <!-- TRANSACTIONS -->
@@ -599,7 +673,7 @@
       <div class="edit-row">
         <div style="position:relative;flex-shrink:0">
           <span class="input-prefix">R$</span>
-          <input class="field field-amount" id="edit-amount" type="number" min="0" step="0.01" placeholder="0,00">
+          <input class="field field-amount" id="edit-amount" type="text" inputmode="decimal" placeholder="0,00">
         </div>
         <input class="field field-desc" id="edit-desc" type="text" placeholder="Descrição" autocomplete="off">
       </div>
@@ -607,10 +681,41 @@
         <select class="field edit-select" id="edit-cat"></select>
         <input class="field edit-date-field" id="edit-date" type="date">
       </div>
+      <div class="edit-row">
+        <select class="field edit-select" id="edit-card" style="flex:1"></select>
+      </div>
     </div>
     <div class="edit-actions">
       <button class="edit-cancel-btn" id="edit-cancel">Cancelar</button>
       <button class="add-btn" id="edit-save">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CARDS SETTINGS MODAL -->
+<div class="edit-backdrop" id="cards-backdrop">
+  <div class="glass-card cards-modal" id="cards-modal">
+    <div class="cards-modal-header">
+      <span class="cards-modal-title">Meus Cartões</span>
+      <button class="cards-modal-close" id="cards-modal-close"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="card-list" id="card-list"></div>
+    <div class="add-card-divider"></div>
+    <div class="add-card-subtitle">Adicionar cartão</div>
+    <div class="add-card-row">
+      <input class="field card-name-field" id="new-card-name" type="text" placeholder="Nome (ex: Nubank, VR)" autocomplete="off">
+      <select class="field card-type-sel" id="new-card-type">
+        <option value="credito">Crédito</option>
+        <option value="debito">Débito</option>
+        <option value="beneficio">Benefício (VR/VA)</option>
+        <option value="dinheiro">Dinheiro / Pix</option>
+        <option value="outro">Outro</option>
+      </select>
+      <div class="color-wrap" id="color-wrap">
+        <input type="color" id="new-card-color" value="#bf5af2">
+        <div class="color-preview" id="color-preview" style="background:#bf5af2"></div>
+      </div>
+      <button class="add-btn" id="add-card-btn" style="height:42px;padding:0 16px;font-size:12px">Adicionar</button>
     </div>
   </div>
 </div>
@@ -688,6 +793,14 @@ const CATS = {
   }
 };
 
+const CARD_TYPES = {
+  credito:   { label: 'Crédito',          color: '#bf5af2' },
+  debito:    { label: 'Débito',            color: '#3a7cff' },
+  beneficio: { label: 'Benefício (VR/VA)', color: '#30d158' },
+  dinheiro:  { label: 'Dinheiro / Pix',   color: '#ff9f0a' },
+  outro:     { label: 'Outro',             color: '#636366' }
+};
+
 const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const MONTHS_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 const MON_IDX = {jan:0,fev:1,mar:2,abr:3,mai:4,jun:5,jul:6,ago:7,set:8,out:9,nov:10,dez:11,janeiro:0,fevereiro:1,março:2,abril:3,maio:4,junho:5,julho:6,agosto:7,setembro:8,outubro:9,novembro:10,dezembro:11};
@@ -700,6 +813,8 @@ const sb = supabase.createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2cmx1ZGljamZ0Z3dtbXh5eWhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjIzNjMsImV4cCI6MjA5MjU5ODM2M30._Yc99cAdCfuKPkgzyvV_Efo7QAqnSLIHld34JRPLBgA'
 );
 let _txns = [];
+let _cartoes = [];
+let selectedCard = null;
 let currentMonth = new Date().getMonth(), currentYear = new Date().getFullYear();
 let manualCat = null, activeFilter = null, hoveredSeg = null, donutSegs = [], editingId = null;
 let selectedDate = new Date(); // for add form
@@ -854,6 +969,7 @@ function closeAllPopups() {
   document.querySelectorAll('.float-popup.open').forEach(p => p.classList.remove('open'));
   document.getElementById('date-btn').classList.remove('active');
   document.getElementById('cat-select-btn').classList.remove('active');
+  document.getElementById('card-select-btn').classList.remove('active');
 }
 
 document.getElementById('date-btn').addEventListener('click', e => {
@@ -971,6 +1087,136 @@ document.getElementById('cat-select-btn').addEventListener('click', e => {
   openPopup('cat-dropdown', document.getElementById('cat-select-btn'));
 });
 
+/* ═══════════════════════════════════════
+   CARD DROPDOWN
+═══════════════════════════════════════ */
+function buildCardDropdown() {
+  const dd = document.getElementById('card-dropdown');
+  document.body.appendChild(dd);
+  const chk = c => `<svg class="card-opt-check" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2.5" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>`;
+  const noneOpt = `<button class="card-opt ${!selectedCard?'selected':''}" data-card="" type="button">
+    <div class="card-opt-dot" style="background:rgba(255,255,255,.2)"></div>Sem cartão ${chk('rgba(255,255,255,.5)')}
+  </button>`;
+  const cardOpts = _cartoes.map(c => {
+    const sel = selectedCard === c.id;
+    return `<button class="card-opt ${sel?'selected':''}" data-card="${c.id}" type="button">
+      <div class="card-opt-dot" style="background:${c.cor}"></div>${c.nome} <span style="color:var(--text-3);font-size:10px">${CARD_TYPES[c.tipo]?.label||''}</span>${chk(c.cor)}
+    </button>`;
+  });
+  dd.innerHTML = [noneOpt, ...cardOpts].join('');
+  if (!_cartoes.length) {
+    dd.innerHTML += `<div style="font-size:11px;color:var(--text-3);padding:8px 10px">Nenhum cartão — clique em "Cartões" para adicionar.</div>`;
+  }
+  dd.addEventListener('click', e => {
+    e.stopPropagation();
+    const opt = e.target.closest('.card-opt');
+    if (!opt) return;
+    setSelectedCard(opt.dataset.card || null);
+    closeAllPopups();
+  });
+}
+
+function setSelectedCard(id) {
+  selectedCard = id || null;
+  const card = id ? _cartoes.find(c => c.id === id) : null;
+  const icon = document.getElementById('ccard-icon');
+  const lbl  = document.getElementById('ccard-label');
+  if (card) {
+    icon.style.cssText = `background:${card.cor}22;color:${card.cor}`;
+    icon.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`;
+    lbl.textContent = card.nome;
+  } else {
+    icon.style.cssText = 'background:rgba(255,255,255,.08)';
+    icon.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`;
+    lbl.textContent = 'Sem cartão';
+  }
+  buildCardDropdown();
+}
+
+document.getElementById('card-select-btn').addEventListener('click', e => {
+  e.stopPropagation();
+  if (document.getElementById('card-dropdown').classList.contains('open')) { closeAllPopups(); return; }
+  buildCardDropdown();
+  openPopup('card-dropdown', document.getElementById('card-select-btn'));
+});
+
+/* ═══════════════════════════════════════
+   CARDS SETTINGS MODAL
+═══════════════════════════════════════ */
+function buildCardsList() {
+  const list = document.getElementById('card-list');
+  if (!_cartoes.length) {
+    list.innerHTML = '<div class="card-list-empty">Nenhum cartão ainda.</div>';
+    return;
+  }
+  list.innerHTML = _cartoes.map(c => `
+    <div class="card-list-item">
+      <div class="card-list-dot" style="background:${c.cor}"></div>
+      <span class="card-list-name">${c.nome}</span>
+      <span class="card-list-type">${CARD_TYPES[c.tipo]?.label||c.tipo}</span>
+      <button class="card-list-del" data-del="${c.id}">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>`).join('');
+}
+
+function buildEditCardSelect() {
+  const sel = document.getElementById('edit-card');
+  sel.innerHTML = `<option value="">Sem cartão</option>` +
+    _cartoes.map(c => `<option value="${c.id}">${c.nome} (${CARD_TYPES[c.tipo]?.label||c.tipo})</option>`).join('');
+}
+
+function openCardsModal() {
+  buildCardsList();
+  document.getElementById('cards-backdrop').classList.add('open');
+}
+function closeCardsModal() {
+  document.getElementById('cards-backdrop').classList.remove('open');
+}
+
+document.getElementById('cards-settings-btn').addEventListener('click', openCardsModal);
+document.getElementById('cards-modal-close').addEventListener('click', closeCardsModal);
+document.getElementById('cards-backdrop').addEventListener('click', e => { if (e.target===e.currentTarget) closeCardsModal(); });
+document.getElementById('cards-modal').addEventListener('click', e => e.stopPropagation());
+
+const CARD_TYPE_DEFAULTS = { credito:'#bf5af2', debito:'#3a7cff', beneficio:'#30d158', dinheiro:'#ff9f0a', outro:'#636366' };
+document.getElementById('new-card-type').addEventListener('change', function() {
+  const def = CARD_TYPE_DEFAULTS[this.value] || '#636366';
+  document.getElementById('new-card-color').value = def;
+  document.getElementById('color-preview').style.background = def;
+});
+document.getElementById('new-card-color').addEventListener('input', function() {
+  document.getElementById('color-preview').style.background = this.value;
+});
+
+document.getElementById('add-card-btn').addEventListener('click', async () => {
+  const nome = document.getElementById('new-card-name').value.trim();
+  if (!nome) return;
+  const tipo = document.getElementById('new-card-type').value;
+  const cor  = document.getElementById('new-card-color').value;
+  const card = { id: Date.now().toString(), nome, tipo, cor, criado_em: Date.now() };
+  _cartoes.push(card);
+  document.getElementById('new-card-name').value = '';
+  buildCardsList();
+  buildCardDropdown();
+  buildEditCardSelect();
+  render();
+  await sb.from('cartoes').insert(card);
+});
+
+document.getElementById('card-list').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-del]');
+  if (!btn) return;
+  const id = btn.dataset.del;
+  _cartoes = _cartoes.filter(c => c.id !== id);
+  if (selectedCard === id) setSelectedCard(null);
+  buildCardsList();
+  buildCardDropdown();
+  buildEditCardSelect();
+  render();
+  await sb.from('cartoes').delete().eq('id', id);
+});
+
 document.addEventListener('click', closeAllPopups);
 document.getElementById('cal-popup').addEventListener('click', e => e.stopPropagation());
 
@@ -1002,15 +1248,18 @@ function drawDonut(bycat, total) {
     donutSegs.push({key,sa,ea,val}); angle+=slice+GAP;
   }
   dCtx.textAlign='center'; dCtx.textBaseline='middle';
+  const isLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
+  const textColor = isLightTheme ? '#1A1612' : '#fff';
+  const dimColor  = isLightTheme ? 'rgba(26,22,18,0.45)' : 'rgba(255,255,255,.35)';
   const hov = hoveredSeg&&bycat[hoveredSeg], act = activeFilter&&bycat[activeFilter];
   const showKey = hov ? hoveredSeg : act ? activeFilter : null;
   if (showKey) {
     const cat=CATS[showKey];
     dCtx.fillStyle=cat.color; dCtx.font=`600 12px -apple-system,sans-serif`; dCtx.fillText(cat.label,cx,cy-11);
-    dCtx.fillStyle='#fff'; dCtx.font=`700 18px -apple-system,sans-serif`; dCtx.fillText(fmtBRL(bycat[showKey]),cx,cy+9);
+    dCtx.fillStyle=textColor; dCtx.font=`700 18px -apple-system,sans-serif`; dCtx.fillText(fmtBRL(bycat[showKey]),cx,cy+9);
   } else {
-    dCtx.fillStyle='rgba(255,255,255,.35)'; dCtx.font=`500 10px -apple-system,sans-serif`; dCtx.fillText('TOTAL',cx,cy-12);
-    dCtx.fillStyle='#fff'; dCtx.font=`700 18px -apple-system,sans-serif`; dCtx.fillText(fmtBRL(total),cx,cy+8);
+    dCtx.fillStyle=dimColor; dCtx.font=`500 10px -apple-system,sans-serif`; dCtx.fillText('TOTAL',cx,cy-12);
+    dCtx.fillStyle=textColor; dCtx.font=`700 18px -apple-system,sans-serif`; dCtx.fillText(fmtBRL(total),cx,cy+8);
   }
 }
 
@@ -1265,17 +1514,50 @@ function render() {
   if (!disp.length){tl.innerHTML=`<div class="txn-empty">${activeFilter?'Nenhuma transação nessa categoria.':'Nenhum gasto neste mês.'}</div>`;}
   else tl.innerHTML=disp.map(t=>{
     const cat=CATS[t.category];
+    const card=t.cartao?_cartoes.find(c=>c.id===t.cartao):null;
     return `<div class="txn-item">
       <div class="txn-cat-dot" style="background:${cat.color}"></div>
       <div class="txn-info">
         <div class="txn-desc">${escHtml(t.description)}</div>
-        <div class="txn-meta"><span class="txn-date">${fmtDate(t.date)}</span><span class="txn-chip" style="background:${cat.color}1a;color:${cat.color}">${cat.label}</span></div>
+        <div class="txn-meta">
+          <span class="txn-date">${fmtDate(t.date)}</span>
+          <span class="txn-chip" style="background:${cat.color}1a;color:${cat.color}">${cat.label}</span>
+          ${card?`<span class="card-chip" style="background:${card.cor}1a;color:${card.cor}">${card.nome}</span>`:''}
+        </div>
       </div>
       <div class="txn-amount">${fmtBRL(t.amount)}</div>
       <button class="txn-edit" data-id="${t.id}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
       <button class="txn-del" data-id="${t.id}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>`;
   }).join('');
+  // card breakdown
+  const cr2 = document.getElementById('card-rows');
+  const cardBreakWrap = document.getElementById('card-breakdown-wrap');
+  if (!_cartoes.length) {
+    cardBreakWrap.style.display = 'none';
+  } else {
+    cardBreakWrap.style.display = '';
+    const byCard = {};
+    for (const t of txns) if (t.cartao) byCard[t.cartao] = (byCard[t.cartao]||0) + t.amount;
+    const cardTotal = Object.values(byCard).reduce((s,v)=>s+v,0);
+    const sorted2 = _cartoes.map(c=>({c,val:byCard[c.id]||0})).filter(x=>x.val>0).sort((a,b)=>b.val-a.val);
+    if (!sorted2.length) {
+      cr2.innerHTML = '<div class="card-breakdown-empty">Nenhum gasto com cartão neste mês.</div>';
+    } else {
+      const maxV = sorted2[0].val;
+      cr2.innerHTML = sorted2.map(({c,val}) => {
+        const pct = maxV ? (val/maxV*100).toFixed(1) : 0;
+        return `<div class="card-row-item">
+          <div class="card-row-dot" style="background:${c.cor}"></div>
+          <div class="card-row-info">
+            <div class="card-row-name">${c.nome} <span class="card-row-type">${CARD_TYPES[c.tipo]?.label||''}</span></div>
+            <div class="card-bar-bg"><div class="card-bar-fill" style="width:${pct}%;background:${c.cor}"></div></div>
+          </div>
+          <div class="card-row-amount">${fmtBRL(val)}</div>
+        </div>`;
+      }).join('');
+    }
+  }
   renderComparison();
 }
 
@@ -1289,20 +1571,21 @@ document.getElementById('next-month').addEventListener('click',()=>{if(++current
 document.getElementById('f-desc').addEventListener('input',function(){if(!manualCat)updatePreview(this.value.trim(),null);});
 
 async function handleAdd(){
-  const amt=parseFloat(document.getElementById('f-amount').value);
+  const amt=parseFloat(document.getElementById('f-amount').value.replace(',','.'));
   const desc=document.getElementById('f-desc').value.trim();
   if (!amt||amt<=0||!desc) return;
   const cat=manualCat||categorize(desc);
-  const txn={id:Date.now().toString(),amount:amt,description:desc,category:cat,date:dateToISO(selectedDate)};
+  const txn={id:Date.now().toString(),amount:amt,description:desc,category:cat,date:dateToISO(selectedDate),cartao:selectedCard};
   _txns.unshift(txn);
   document.getElementById('f-amount').value='';
   document.getElementById('f-desc').value='';
   document.getElementById('cat-preview').className='cat-preview hidden';
   setDropdownCat('');
+  setSelectedCard(null);
   const tMonth=selectedDate.getMonth(), tYear=selectedDate.getFullYear();
   if (tMonth!==currentMonth||tYear!==currentYear){currentMonth=tMonth;currentYear=tYear;}
   render();
-  await sb.from('financas').insert({id:txn.id,descricao:txn.description,valor:txn.amount,categoria:txn.category,data:txn.date});
+  await sb.from('financas').insert({id:txn.id,descricao:txn.description,valor:txn.amount,categoria:txn.category,data:txn.date,cartao:txn.cartao});
 }
 
 document.getElementById('add-btn').addEventListener('click',handleAdd);
@@ -1315,7 +1598,19 @@ document.getElementById('cat-rows').addEventListener('click',e=>{
 document.getElementById('fc-clear').addEventListener('click',()=>{activeFilter=null;render();});
 document.getElementById('txn-list').addEventListener('click',e=>{
   const del=e.target.closest('.txn-del');
-  if (del) { _txns=_txns.filter(t=>t.id!==del.dataset.id); render(); sb.from('financas').delete().eq('id',del.dataset.id); return; }
+  if (del) {
+    const delId = del.dataset.id;
+    const backup = _txns.find(t => t.id === delId);
+    _txns = _txns.filter(t => t.id !== delId);
+    render();
+    sb.from('financas').delete().eq('id', delId).then(({error}) => {
+      if (error) {
+        console.error('Erro ao apagar:', error);
+        if (backup) { _txns.unshift(backup); render(); }
+      }
+    });
+    return;
+  }
   const edit=e.target.closest('.txn-edit');
   if (edit) openEditModal(edit.dataset.id);
 });
@@ -1336,6 +1631,8 @@ function openEditModal(id) {
   document.getElementById('edit-desc').value=t.description;
   document.getElementById('edit-cat').value=t.category;
   document.getElementById('edit-date').value=t.date;
+  buildEditCardSelect();
+  document.getElementById('edit-card').value=t.cartao||'';
   document.getElementById('edit-backdrop').classList.add('open');
 }
 function closeEditModal() {
@@ -1344,20 +1641,21 @@ function closeEditModal() {
 }
 function saveEdit() {
   if (!editingId) return;
-  const amt=parseFloat(document.getElementById('edit-amount').value);
+  const amt=parseFloat(document.getElementById('edit-amount').value.replace(',','.'));
   const desc=document.getElementById('edit-desc').value.trim();
   const cat=document.getElementById('edit-cat').value;
   const date=document.getElementById('edit-date').value;
+  const cartao=document.getElementById('edit-card').value||null;
   if (!amt||amt<=0||!desc||!date) return;
   const idx=_txns.findIndex(x=>x.id===editingId);
   if (idx===-1){closeEditModal();return;}
-  _txns[idx]={..._txns[idx],amount:amt,description:desc,category:cat,date};
+  _txns[idx]={..._txns[idx],amount:amt,description:desc,category:cat,date,cartao};
   const savedId=editingId;
   closeEditModal();
   const [y,m]=date.split('-').map(Number);
   if (m-1!==currentMonth||y!==currentYear){currentMonth=m-1;currentYear=y;}
   render();
-  sb.from('financas').update({descricao:desc,valor:amt,categoria:cat,data:date}).eq('id',savedId);
+  sb.from('financas').update({descricao:desc,valor:amt,categoria:cat,data:date,cartao}).eq('id',savedId);
 }
 document.getElementById('edit-save').addEventListener('click',saveEdit);
 document.getElementById('edit-cancel').addEventListener('click',closeEditModal);
@@ -1370,9 +1668,15 @@ document.getElementById('edit-desc').addEventListener('keydown',e=>{if(e.key==='
    INIT
 ═══════════════════════════════════════ */
 async function initFinancas() {
-  const { data } = await sb.from('financas').select('*');
-  _txns = (data || []).map(r => ({ id: r.id, amount: r.valor, description: r.descricao, category: r.categoria, date: r.data }));
+  const [txnRes, cardRes] = await Promise.all([
+    sb.from('financas').select('*'),
+    sb.from('cartoes').select('*').order('criado_em')
+  ]);
+  _txns   = (txnRes.data  || []).map(r => ({ id: r.id, amount: r.valor, description: r.descricao, category: r.categoria, date: r.data, cartao: r.cartao||null }));
+  _cartoes = cardRes.data || [];
   buildCatDropdown();
+  buildCardDropdown();
+  buildEditCardSelect();
   document.body.appendChild(document.getElementById('cal-popup'));
   render();
 }
