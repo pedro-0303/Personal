@@ -1585,7 +1585,8 @@ async function handleAdd(){
   const tMonth=selectedDate.getMonth(), tYear=selectedDate.getFullYear();
   if (tMonth!==currentMonth||tYear!==currentYear){currentMonth=tMonth;currentYear=tYear;}
   render();
-  await sb.from('financas').insert({id:txn.id,descricao:txn.description,valor:txn.amount,categoria:txn.category,data:txn.date,cartao:txn.cartao});
+  const { error: insErr } = await sb.from('financas').insert({id:txn.id,descricao:txn.description,valor:txn.amount,categoria:txn.category,data:txn.date,cartao:txn.cartao});
+  if (insErr) console.error('Erro ao salvar gasto:', insErr.message);
 }
 
 document.getElementById('add-btn').addEventListener('click',handleAdd);
@@ -1655,7 +1656,8 @@ function saveEdit() {
   const [y,m]=date.split('-').map(Number);
   if (m-1!==currentMonth||y!==currentYear){currentMonth=m-1;currentYear=y;}
   render();
-  sb.from('financas').update({descricao:desc,valor:amt,categoria:cat,data:date,cartao}).eq('id',savedId);
+  sb.from('financas').update({descricao:desc,valor:amt,categoria:cat,data:date,cartao}).eq('id',savedId)
+    .then(({error}) => { if (error) console.error('Erro ao editar:', error.message); });
 }
 document.getElementById('edit-save').addEventListener('click',saveEdit);
 document.getElementById('edit-cancel').addEventListener('click',closeEditModal);
