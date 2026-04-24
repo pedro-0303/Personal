@@ -617,6 +617,7 @@
 
 <div class="home-indicator"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 (function() {
   const t = localStorage.getItem('pedro_theme') || 'dark';
@@ -694,7 +695,11 @@ const MON_IDX = {jan:0,fev:1,mar:2,abr:3,mai:4,jun:5,jul:6,ago:7,set:8,out:9,nov
 /* ═══════════════════════════════════════
    STATE
 ═══════════════════════════════════════ */
-const KEY = 'pedro_financas_v1';
+const sb = supabase.createClient(
+  'https://hvrludicjftgwmmxyyhl.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2cmx1ZGljamZ0Z3dtbXh5eWhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjIzNjMsImV4cCI6MjA5MjU5ODM2M30._Yc99cAdCfuKPkgzyvV_Efo7QAqnSLIHld34JRPLBgA'
+);
+let _txns = [];
 let currentMonth = new Date().getMonth(), currentYear = new Date().getFullYear();
 let manualCat = null, activeFilter = null, hoveredSeg = null, donutSegs = [], editingId = null;
 let selectedDate = new Date(); // for add form
@@ -707,8 +712,7 @@ let cachedBycat = {}, cachedTotal = 0;
 /* ═══════════════════════════════════════
    DATA HELPERS
 ═══════════════════════════════════════ */
-const loadAll  = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
-const saveAll  = d  => localStorage.setItem(KEY, JSON.stringify(d));
+const loadAll = () => _txns;
 const fmtBRL   = v  => v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
 const fmtDate  = d  => { const [,m,day] = d.split('-'); return `${day}/${m}`; };
 const DPR      = window.devicePixelRatio || 1;
@@ -1284,22 +1288,21 @@ document.getElementById('prev-month').addEventListener('click',()=>{if(--current
 document.getElementById('next-month').addEventListener('click',()=>{if(++currentMonth>11){currentMonth=0;currentYear++;}activeFilter=null;render();});
 document.getElementById('f-desc').addEventListener('input',function(){if(!manualCat)updatePreview(this.value.trim(),null);});
 
-function handleAdd(){
+async function handleAdd(){
   const amt=parseFloat(document.getElementById('f-amount').value);
   const desc=document.getElementById('f-desc').value.trim();
   if (!amt||amt<=0||!desc) return;
   const cat=manualCat||categorize(desc);
-  const data=loadAll();
-  data.unshift({id:Date.now().toString(),amount:amt,description:desc,category:cat,date:dateToISO(selectedDate)});
-  saveAll(data);
+  const txn={id:Date.now().toString(),amount:amt,description:desc,category:cat,date:dateToISO(selectedDate)};
+  _txns.unshift(txn);
   document.getElementById('f-amount').value='';
   document.getElementById('f-desc').value='';
   document.getElementById('cat-preview').className='cat-preview hidden';
   setDropdownCat('');
-  // If the transaction's month differs from current view, switch to it
   const tMonth=selectedDate.getMonth(), tYear=selectedDate.getFullYear();
   if (tMonth!==currentMonth||tYear!==currentYear){currentMonth=tMonth;currentYear=tYear;}
   render();
+  await sb.from('financas').insert({id:txn.id,descricao:txn.description,valor:txn.amount,categoria:txn.category,data:txn.date});
 }
 
 document.getElementById('add-btn').addEventListener('click',handleAdd);
@@ -1312,7 +1315,7 @@ document.getElementById('cat-rows').addEventListener('click',e=>{
 document.getElementById('fc-clear').addEventListener('click',()=>{activeFilter=null;render();});
 document.getElementById('txn-list').addEventListener('click',e=>{
   const del=e.target.closest('.txn-del');
-  if (del) { saveAll(loadAll().filter(t=>t.id!==del.dataset.id)); render(); return; }
+  if (del) { _txns=_txns.filter(t=>t.id!==del.dataset.id); render(); sb.from('financas').delete().eq('id',del.dataset.id); return; }
   const edit=e.target.closest('.txn-edit');
   if (edit) openEditModal(edit.dataset.id);
 });
@@ -1346,13 +1349,15 @@ function saveEdit() {
   const cat=document.getElementById('edit-cat').value;
   const date=document.getElementById('edit-date').value;
   if (!amt||amt<=0||!desc||!date) return;
-  const all=loadAll(), idx=all.findIndex(x=>x.id===editingId);
+  const idx=_txns.findIndex(x=>x.id===editingId);
   if (idx===-1){closeEditModal();return;}
-  all[idx]={...all[idx],amount:amt,description:desc,category:cat,date};
-  saveAll(all); closeEditModal();
+  _txns[idx]={..._txns[idx],amount:amt,description:desc,category:cat,date};
+  const savedId=editingId;
+  closeEditModal();
   const [y,m]=date.split('-').map(Number);
   if (m-1!==currentMonth||y!==currentYear){currentMonth=m-1;currentYear=y;}
   render();
+  sb.from('financas').update({descricao:desc,valor:amt,categoria:cat,data:date}).eq('id',savedId);
 }
 document.getElementById('edit-save').addEventListener('click',saveEdit);
 document.getElementById('edit-cancel').addEventListener('click',closeEditModal);
@@ -1364,9 +1369,14 @@ document.getElementById('edit-desc').addEventListener('keydown',e=>{if(e.key==='
 /* ═══════════════════════════════════════
    INIT
 ═══════════════════════════════════════ */
-buildCatDropdown();
-document.body.appendChild(document.getElementById('cal-popup'));
-render();
+async function initFinancas() {
+  const { data } = await sb.from('financas').select('*');
+  _txns = (data || []).map(r => ({ id: r.id, amount: r.valor, description: r.descricao, category: r.categoria, date: r.data }));
+  buildCatDropdown();
+  document.body.appendChild(document.getElementById('cal-popup'));
+  render();
+}
+initFinancas();
 </script>
 </body>
 </html>

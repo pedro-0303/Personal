@@ -538,6 +538,7 @@
 
   <div class="home-indicator"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
     (function() {
       const t = localStorage.getItem('pedro_theme') || 'dark';
@@ -564,9 +565,11 @@
     document.addEventListener('DOMContentLoaded', updateThemeIcon);
 
     const DEFAULT_TAGS = ['viagem', 'senhas', 'ideias', 'trabalho', 'pessoal'];
-    const POSTS_KEY = 'pedro_notas_posts';
-    const AREAS_KEY = 'pedro_notas_areas';
-    const TAGS_KEY  = 'pedro_notas_tags';
+    const sb = supabase.createClient(
+      'https://hvrludicjftgwmmxyyhl.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2cmx1ZGljamZ0Z3dtbXh5eWhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjIzNjMsImV4cCI6MjA5MjU5ODM2M30._Yc99cAdCfuKPkgzyvV_Efo7QAqnSLIHld34JRPLBgA'
+    );
+    let _posts = [], _areas = [], _tags = [...DEFAULT_TAGS];
 
     let currentTab   = getTabFromURL();
     let filterTag    = null;
@@ -575,20 +578,14 @@
     let dragCardId   = null;
     let dragAreaId   = null;
 
-    const loadPosts = () => { try { return JSON.parse(localStorage.getItem(POSTS_KEY)) || []; } catch { return []; } };
-    const savePosts = d  => localStorage.setItem(POSTS_KEY, JSON.stringify(d));
-    const loadAreas = () => { try { return JSON.parse(localStorage.getItem(AREAS_KEY)) || []; } catch { return []; } };
-    const saveAreas = d  => localStorage.setItem(AREAS_KEY, JSON.stringify(d));
-    function loadTags() {
-      try { const s = localStorage.getItem(TAGS_KEY); return s ? JSON.parse(s) : [...DEFAULT_TAGS]; }
-      catch { return [...DEFAULT_TAGS]; }
-    }
-    const saveTags = d => localStorage.setItem(TAGS_KEY, JSON.stringify(d));
+    const loadPosts = () => _posts;
+    const loadAreas = () => _areas;
+    function loadTags() { return _tags; }
 
     function uid()      { return Math.random().toString(36).slice(2, 10); }
     function esc(s)     { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
     function parseTag(t){ const m = t.match(/#(\w+)/); return m ? m[1].toLowerCase() : null; }
-    function ensureTag(t) { const tags = loadTags(); if (!tags.includes(t)) { tags.push(t); saveTags(tags); } }
+    function ensureTag(t) { if (!_tags.includes(t)) { _tags.push(t); sb.from('notas_tags').upsert({ nome: t }); } }
     function formatTime(ts) {
       const d = (Date.now() - ts) / 1000;
       if (d < 60)    return 'agora';
@@ -679,20 +676,19 @@
       document.getElementById('img-input').value = '';
     }
 
-    function submitPost() {
+    async function submitPost() {
       const text = composeTextarea.value.trim();
       if (!text) return;
       const tag = selectedTag || parseTag(text) || null;
-      loadPosts(); // ensure fresh
-      const posts = loadPosts();
-      posts.unshift({ id: uid(), text, tag, ts: Date.now(), promoted: false, image: pendingImage });
-      savePosts(posts);
+      const post = { id: uid(), text, tag, ts: Date.now(), promoted: false, image: pendingImage };
+      _posts.unshift(post);
       composeTextarea.value = '';
       composeSubmit.className = 'submit-btn empty';
       selectedTag = null;
       removeImage();
       renderTagPills();
       renderFeed();
+      await sb.from('notas_posts').insert({ id: post.id, texto: post.text, tag: post.tag, ts: post.ts, promoted: post.promoted, image: post.image });
     }
 
     /* ── Feed ── */
@@ -739,11 +735,11 @@
     }
 
     function setFilter(tag) { filterTag = tag; renderFeed(); }
-    function deletePost(id) { savePosts(loadPosts().filter(p => p.id !== id)); renderFeed(); }
+    function deletePost(id) { _posts = _posts.filter(p => p.id !== id); renderFeed(); sb.from('notas_posts').delete().eq('id', id); }
     function togglePromote(id) {
-      const posts = loadPosts(), idx = posts.findIndex(p => p.id === id);
-      if (idx >= 0) posts[idx].promoted = !posts[idx].promoted;
-      savePosts(posts); renderFeed();
+      const idx = _posts.findIndex(p => p.id === id);
+      if (idx >= 0) { _posts[idx].promoted = !_posts[idx].promoted; sb.from('notas_posts').update({ promoted: _posts[idx].promoted }).eq('id', id); }
+      renderFeed();
     }
 
     /* ── Canvas ── */
@@ -803,7 +799,7 @@
       el.replaceWith(input); input.focus(); input.select();
       function commit() {
         const name = input.value.trim();
-        if (name) { const all = loadAreas(), i = all.findIndex(a => a.id === id); if (i >= 0) all[i].name = name; saveAreas(all); }
+        if (name) { const i = _areas.findIndex(a => a.id === id); if (i >= 0) { _areas[i].name = name; sb.from('notas_areas').update({ nome: name }).eq('id', id); } }
         renderCanvas();
       }
       input.addEventListener('blur', commit);
@@ -828,8 +824,8 @@
       function addCard() {
         const text = ta.value.trim();
         if (!text) { renderCanvas(); return; }
-        const all = loadAreas(), i = all.findIndex(a => a.id === areaId);
-        if (i >= 0) { all[i].cards = all[i].cards || []; all[i].cards.push({ id: uid(), text, ts: Date.now() }); saveAreas(all); }
+        const i = _areas.findIndex(a => a.id === areaId);
+        if (i >= 0) { _areas[i].cards = _areas[i].cards || []; _areas[i].cards.push({ id: uid(), text, ts: Date.now() }); sb.from('notas_areas').update({ cards: _areas[i].cards }).eq('id', areaId); }
         renderCanvas();
       }
       addBtn.addEventListener('click', addCard);
@@ -841,12 +837,12 @@
     }
 
     function deleteCard(areaId, cardId) {
-      const all = loadAreas(), i = all.findIndex(a => a.id === areaId);
-      if (i >= 0) all[i].cards = (all[i].cards || []).filter(c => c.id !== cardId);
-      saveAreas(all); renderCanvas();
+      const i = _areas.findIndex(a => a.id === areaId);
+      if (i >= 0) { _areas[i].cards = (_areas[i].cards || []).filter(c => c.id !== cardId); sb.from('notas_areas').update({ cards: _areas[i].cards }).eq('id', areaId); }
+      renderCanvas();
     }
 
-    function deleteArea(id) { saveAreas(loadAreas().filter(a => a.id !== id)); renderCanvas(); }
+    function deleteArea(id) { _areas = _areas.filter(a => a.id !== id); renderCanvas(); sb.from('notas_areas').delete().eq('id', id); }
 
     function showNewAreaForm() {
       const tags = loadTags();
@@ -874,9 +870,10 @@
       const name = document.getElementById('naf-name').value.trim();
       if (!name) return;
       const tag = document.getElementById('naf-tag').value || null;
-      const all = loadAreas();
-      all.push({ id: uid(), name, tag, cards: [] });
-      saveAreas(all); cancelNewArea(); renderCanvas();
+      const area = { id: uid(), name, tag, cards: [] };
+      _areas.push(area);
+      cancelNewArea(); renderCanvas();
+      sb.from('notas_areas').insert({ id: area.id, nome: area.name, tag: area.tag, cards: [] });
     }
 
     /* ── Drag & drop ── */
@@ -889,13 +886,14 @@
         el.addEventListener('drop', e => {
           e.preventDefault(); el.classList.remove('drag-over');
           if (!dragCardId || dragCardId === el.dataset.cardId || dragAreaId !== el.dataset.areaId) return;
-          const all = loadAreas(), i = all.findIndex(a => a.id === el.dataset.areaId);
+          const i = _areas.findIndex(a => a.id === el.dataset.areaId);
           if (i < 0) return;
-          const cs = [...(all[i].cards || [])];
+          const cs = [...(_areas[i].cards || [])];
           const fi = cs.findIndex(c => c.id === dragCardId), ti = cs.findIndex(c => c.id === el.dataset.cardId);
           if (fi < 0 || ti < 0) return;
           const [item] = cs.splice(fi, 1); cs.splice(ti, 0, item);
-          all[i].cards = cs; saveAreas(all); renderCanvas();
+          _areas[i].cards = cs; renderCanvas();
+          sb.from('notas_areas').update({ cards: cs }).eq('id', el.dataset.areaId);
         });
       });
     }
@@ -910,7 +908,20 @@
       else                       { renderCanvas(); }
     }
 
-    renderShell();
+    async function init() {
+      try {
+        const [pr, ar, tr] = await Promise.all([
+          sb.from('notas_posts').select('*').order('ts', { ascending: false }),
+          sb.from('notas_areas').select('*'),
+          sb.from('notas_tags').select('nome')
+        ]);
+        if (pr.data) _posts = pr.data.map(r => ({ id: r.id, text: r.texto, tag: r.tag, ts: r.ts, promoted: r.promoted, image: r.image }));
+        if (ar.data) _areas = ar.data.map(r => ({ id: r.id, name: r.nome, tag: r.tag, cards: r.cards || [] }));
+        if (tr.data && tr.data.length) _tags = tr.data.map(r => r.nome);
+      } catch(e) { console.error('Supabase init failed', e); }
+      renderShell();
+    }
+    init();
   </script>
 </body>
 </html>
