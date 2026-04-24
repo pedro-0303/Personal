@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notas — Pedro.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Playfair+Display:ital,wght@1,700;1,900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #060608;
+      --text:        #f0f0f5;
+      --text-2:      rgba(240,240,245,0.5);
+      --text-3:      rgba(240,240,245,0.22);
+      --glass:       rgba(255,255,255,0.065);
+      --glass-2:     rgba(255,255,255,0.04);
+      --border:      rgba(255,255,255,0.1);
+      --shine:       rgba(255,255,255,0.18);
+      --accent:      #3a7cff;
+      --accent-glow: rgba(58,124,255,0.22);
+      --accent-dim:  rgba(58,124,255,0.1);
+      --danger:      #ff3b30;
+    }
+
+    [data-theme="light"] {
+      --bg:          #F6EFE0;
+      --text:        #1A1612;
+      --text-2:      rgba(26,22,18,0.55);
+      --text-3:      rgba(26,22,18,0.28);
+      --glass:       rgba(255,255,255,0.55);
+      --glass-2:     rgba(255,255,255,0.4);
+      --border:      rgba(0,0,0,0.1);
+      --shine:       rgba(255,255,255,0.85);
+      --accent:      #2060F0;
+      --accent-glow: rgba(32,96,240,0.2);
+      --accent-dim:  rgba(32,96,240,0.08);
+      --danger:      #D63B2A;
+    }
+
+    html, body {
+      height: 100%; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased; overflow-x: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* ── Background ── */
+    .bg-layer { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(90px);
+      animation: drift ease-in-out infinite alternate;
+    }
+    .orb-1 { width: 700px; height: 700px; background: #0b2050; top: -260px; left: -200px; animation-duration: 22s; opacity: 0.7; }
+    .orb-2 { width: 580px; height: 580px; background: #1c0840; bottom: -160px; right: -130px; animation-duration: 18s; animation-delay: -7s; opacity: 0.6; }
+    .orb-3 { width: 400px; height: 400px; background: #082920; top: 40%; left: 55%; animation-duration: 26s; animation-delay: -12s; opacity: 0.35; }
+
+    [data-theme="light"] .orb-1 { background: #b8cef5; opacity: 0.55; }
+    [data-theme="light"] .orb-2 { background: #d0bef5; opacity: 0.45; }
+    [data-theme="light"] .orb-3 { background: #b8e8cc; opacity: 0.3; }
+
+    @keyframes drift {
+      0%   { transform: translate(0,0) scale(1); }
+      50%  { transform: translate(35px,25px) scale(1.05); }
+      100% { transform: translate(-25px,-15px) scale(0.97); }
+    }
+
+    .grain {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.03; mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      padding: 0 32px; height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(6,6,8,0.65);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border-bottom: 0.5px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-weight: 700; font-size: 18px; color: var(--text); text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 6px; list-style: none; }
+    .nav-links a {
+      font-size: 13px; font-weight: 400; color: var(--text-2); text-decoration: none;
+      padding: 5px 12px; border-radius: 20px; transition: background 0.2s, color 0.2s;
+    }
+    .nav-links a:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+    .nav-links a.active { color: var(--text); background: rgba(255,255,255,0.07); }
+
+    /* ── Glass ── */
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(40px) saturate(1.8);
+      -webkit-backdrop-filter: blur(40px) saturate(1.8);
+      border: 0.5px solid var(--border);
+      box-shadow: inset 0 1px 0 var(--shine), inset 0 -1px 0 rgba(0,0,0,0.1),
+                  0 4px 16px rgba(0,0,0,0.35), 0 12px 40px rgba(0,0,0,0.25);
+    }
+
+    /* ── Shell ── */
+    .shell { position: relative; z-index: 10; min-height: 100vh; padding-top: 52px; display: flex; flex-direction: column; }
+
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 48px 0;
+    }
+    .page-wordmark {
+      font-family: 'DM Serif Display', Georgia, serif; font-style: italic; font-size: 28px;
+      background: linear-gradient(135deg, var(--text) 40%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── Tab toggle ── */
+    .tab-toggle {
+      display: flex; align-items: center; gap: 2px; padding: 3px;
+      background: rgba(255,255,255,0.05); border: 0.5px solid var(--border); border-radius: 12px;
+    }
+    .tab-btn {
+      padding: 7px 22px; border-radius: 9px; font-size: 13px; font-weight: 500;
+      color: var(--text-2); background: transparent; border: none; cursor: pointer;
+      font-family: inherit; transition: all 0.2s cubic-bezier(.4,0,.2,1);
+    }
+    .tab-btn.active {
+      background: rgba(255,255,255,0.1); border: 0.5px solid var(--border);
+      box-shadow: inset 0 1px 0 var(--shine), 0 2px 8px rgba(0,0,0,0.4); color: var(--text);
+    }
+
+    /* ── Content ── */
+    .content { flex: 1; padding: 28px 48px 80px; }
+    .feed-wrap { max-width: 600px; margin: 0 auto; }
+
+    /* ── Compose ── */
+    .compose {
+      position: relative; border-radius: 20px; margin-bottom: 28px; overflow: hidden;
+      transition: box-shadow 0.25s ease;
+    }
+    .compose.focused {
+      box-shadow: inset 0 1px 0 var(--shine), 0 0 0 1px var(--accent),
+                  0 4px 32px var(--accent-glow), 0 12px 40px rgba(0,0,0,0.35) !important;
+    }
+    .compose-body { padding: 20px 22px 16px; }
+    .compose textarea {
+      width: 100%; font-family: inherit; font-size: 15px; line-height: 1.7;
+      color: var(--text); background: transparent; border: none; outline: none;
+      resize: none; min-height: 76px;
+    }
+    .compose textarea::placeholder { color: var(--text-3); }
+
+    .compose-img-wrap { position: relative; margin: 0 22px 14px; display: none; }
+    .compose-img-wrap img { max-width: 100%; max-height: 200px; border-radius: 12px; display: block; object-fit: cover; }
+    .compose-img-remove {
+      position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(0,0,0,0.7); color: #fff; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 15px;
+    }
+
+    /* Tag row */
+    .tag-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 22px 12px;
+      border-top: 0.5px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .tag-row-label {
+      font-size: 10px; font-weight: 600; color: var(--text-3);
+      letter-spacing: 0.06em; text-transform: uppercase; flex-shrink: 0;
+    }
+    #tag-pills {
+      display: flex; gap: 6px; align-items: center;
+      overflow-x: auto; flex: 1; min-width: 0;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    #tag-pills::-webkit-scrollbar { display: none; }
+
+    .tag-pill {
+      flex-shrink: 0; padding: 4px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+      background: rgba(255,255,255,0.06); border: 0.5px solid var(--border);
+      color: var(--text-2); cursor: pointer; font-family: inherit;
+      transition: all 0.15s ease; white-space: nowrap;
+    }
+    .tag-pill:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+    .tag-pill.selected { background: var(--accent); border-color: transparent; color: #fff; box-shadow: 0 2px 10px var(--accent-glow); }
+
+    .tag-add-btn {
+      flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+      border: 0.5px dashed rgba(255,255,255,0.25); background: transparent;
+      color: var(--text-3); cursor: pointer; font-family: inherit; font-size: 16px;
+      display: flex; align-items: center; justify-content: center; transition: all 0.15s ease;
+    }
+    .tag-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .tag-new-input {
+      flex-shrink: 0; width: 100px; padding: 3px 10px; border-radius: 20px;
+      background: rgba(58,124,255,0.08); border: 1px solid var(--accent);
+      color: var(--text); font-family: inherit; font-size: 12px; outline: none;
+    }
+    .tag-new-input::placeholder { color: var(--text-3); }
+
+    .compose-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 22px 16px;
+      border-top: 0.5px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .compose-left { display: flex; gap: 8px; align-items: center; }
+
+    .img-btn {
+      display: flex; align-items: center; gap: 4px; font-family: inherit;
+      font-size: 12px; color: var(--text-3); background: transparent; border: none;
+      cursor: pointer; padding: 5px 8px; border-radius: 8px; transition: color 0.15s, background 0.15s;
+    }
+    .img-btn:hover { color: var(--text-2); background: rgba(255,255,255,0.05); }
+
+    .submit-btn {
+      height: 34px; padding: 0 18px; border-radius: 9px; border: none;
+      font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.18s ease;
+    }
+    .submit-btn.ready { background: var(--accent); color: #fff; box-shadow: 0 2px 12px var(--accent-glow); }
+    .submit-btn.ready:hover { opacity: 0.88; }
+    .submit-btn.empty { background: rgba(255,255,255,0.06); color: var(--text-3); cursor: default; }
+
+    .compose-drag-overlay {
+      display: none; position: absolute; inset: 0; border-radius: 20px;
+      border: 1.5px dashed var(--accent); background: var(--accent-dim);
+      align-items: center; justify-content: center;
+      color: var(--accent); font-size: 13px; pointer-events: none; z-index: 20;
+    }
+    .compose-drag-overlay.active { display: flex; }
+
+    /* ── Filter bar ── */
+    .filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+    .filter-pill {
+      padding: 5px 13px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      letter-spacing: 0.02em; cursor: pointer; border: none; font-family: inherit; transition: all 0.15s ease;
+    }
+    .filter-pill.on { background: var(--accent); color: #fff; box-shadow: 0 2px 10px var(--accent-glow); }
+    .filter-pill.off { background: rgba(255,255,255,0.06); border: 0.5px solid var(--border); color: var(--text-2); }
+    .filter-pill.off:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+    /* ── Post card ── */
+    .post-card {
+      border-radius: 16px; padding: 18px 20px 14px; margin-bottom: 12px; position: relative;
+      transition: transform 0.18s cubic-bezier(.4,0,.2,1), box-shadow 0.18s ease;
+      animation: cardIn 0.32s cubic-bezier(.4,0,.2,1) both;
+    }
+    .post-card:hover { transform: translateY(-2px); }
+    .post-card:nth-child(1) { animation-delay: 0.03s; }
+    .post-card:nth-child(2) { animation-delay: 0.06s; }
+    .post-card:nth-child(3) { animation-delay: 0.09s; }
+    .post-card:nth-child(4) { animation-delay: 0.12s; }
+    .post-card:nth-child(n+5) { animation-delay: 0.15s; }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .post-text { font-size: 15px; line-height: 1.65; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+    .post-img { display: block; margin-top: 12px; max-width: 100%; max-height: 240px; border-radius: 10px; object-fit: cover; }
+    .post-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; gap: 8px; }
+    .post-meta { display: flex; gap: 7px; align-items: center; min-width: 0; }
+    .post-ts { font-size: 11px; color: var(--text-3); white-space: nowrap; }
+    .post-actions { display: flex; gap: 5px; opacity: 0; transition: opacity 0.15s; flex-shrink: 0; }
+    .post-card:hover .post-actions { opacity: 1; }
+
+    /* ── Buttons ── */
+    .act-btn {
+      padding: 4px 10px; border-radius: 7px; font-size: 12px; font-weight: 500;
+      font-family: inherit; border: 0.5px solid transparent;
+      background: rgba(255,255,255,0.05); color: var(--text-2); cursor: pointer; transition: all 0.13s ease;
+    }
+    .act-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); border-color: var(--border); }
+    .act-btn.canvas-on { color: var(--accent); background: var(--accent-dim); border-color: rgba(58,124,255,0.22); }
+    .act-btn.canvas-on:hover { background: var(--accent); color: #fff; box-shadow: 0 2px 12px var(--accent-glow); border-color: transparent; }
+    .act-btn.del:hover { background: rgba(255,59,48,0.15); color: var(--danger); border-color: rgba(255,59,48,0.2); }
+
+    /* ── Badge ── */
+    .badge {
+      display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.03em; white-space: nowrap;
+    }
+    .badge-accent { background: rgba(58,124,255,0.1); border: 0.5px solid rgba(58,124,255,0.25); color: var(--accent); }
+
+    /* ── Empty ── */
+    .empty { text-align: center; color: var(--text-3); padding: 56px 0; font-size: 13px; font-style: italic; }
+
+    /* ── Canvas ── */
+    .canvas-wrap { max-width: 960px; margin: 0 auto; }
+    .canvas-toolbar { display: flex; justify-content: flex-end; margin-bottom: 24px; }
+
+    .btn-primary {
+      padding: 8px 20px; border-radius: 10px; border: none; font-family: inherit;
+      font-size: 13px; font-weight: 500; background: var(--accent); color: #fff; cursor: pointer;
+      box-shadow: 0 2px 12px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.15);
+      transition: all 0.15s ease;
+    }
+    .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+
+    .new-area-form { display: flex; gap: 8px; align-items: center; padding: 12px 16px; border-radius: 14px; }
+    .area-input {
+      background: rgba(255,255,255,0.07); border: 0.5px solid var(--border); border-radius: 9px;
+      padding: 8px 12px; color: var(--text); font-family: inherit; font-size: 13px; outline: none;
+      transition: border-color 0.15s;
+    }
+    .area-input:focus { border-color: var(--accent); }
+    .area-input::placeholder { color: var(--text-3); }
+
+    .area-tag-select {
+      background: rgba(255,255,255,0.07); border: 0.5px solid var(--border); border-radius: 9px;
+      padding: 8px 12px; color: var(--text); font-family: inherit; font-size: 13px;
+      outline: none; cursor: pointer; color-scheme: dark;
+    }
+    .area-tag-select:focus { border-color: var(--accent); }
+
+    .areas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; align-items: start; }
+
+    .area-card { border-radius: 16px; overflow: hidden; animation: cardIn 0.3s cubic-bezier(.4,0,.2,1) both; }
+
+    .area-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px 12px; background: rgba(255,255,255,0.04);
+      border-bottom: 0.5px solid var(--border);
+    }
+    .area-hdr-left { display: flex; gap: 8px; align-items: center; min-width: 0; flex: 1; }
+    .area-name {
+      font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -0.01em;
+      cursor: text; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .area-name-input {
+      font-size: 14px; font-weight: 600; background: rgba(58,124,255,0.08);
+      border: 1px solid var(--accent); border-radius: 7px; padding: 3px 8px;
+      color: var(--text); font-family: inherit; outline: none; width: 140px;
+    }
+    .area-count {
+      font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 10px;
+      background: rgba(255,255,255,0.06); border: 0.5px solid var(--border); color: var(--text-3); flex-shrink: 0;
+    }
+    .area-hdr-actions { display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; flex-shrink: 0; margin-left: 8px; }
+    .area-card:hover .area-hdr-actions { opacity: 1; }
+
+    .area-body { padding: 12px 14px 14px; min-height: 80px; }
+
+    .canvas-card {
+      border-radius: 10px; padding: 11px 13px; margin-bottom: 8px;
+      background: rgba(255,255,255,0.04); border: 0.5px solid var(--border);
+      position: relative; transition: background 0.12s;
+    }
+    .canvas-card:last-child { margin-bottom: 0; }
+    .canvas-card:hover { background: rgba(255,255,255,0.07); }
+    .canvas-card.from-feed { background: rgba(58,124,255,0.05); border-color: rgba(58,124,255,0.2); }
+    .canvas-card.drag-over { outline: 1px solid var(--accent); outline-offset: 2px; }
+
+    .card-feed-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); opacity: 0.7; display: block; margin-bottom: 5px;
+    }
+    .canvas-card-text { font-size: 13px; line-height: 1.6; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+    .canvas-card-del {
+      position: absolute; top: 7px; right: 8px; width: 20px; height: 20px; border: none;
+      background: transparent; color: var(--text-3); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 14px;
+      border-radius: 4px; opacity: 0; transition: opacity 0.12s, color 0.12s, background 0.12s;
+    }
+    .canvas-card:hover .canvas-card-del { opacity: 1; }
+    .canvas-card-del:hover { color: var(--danger); background: rgba(255,59,48,0.12); }
+
+    .add-card-form {
+      border-radius: 10px; padding: 11px 13px; margin-top: 8px;
+      background: rgba(58,124,255,0.06); border: 1px solid rgba(58,124,255,0.25);
+    }
+    .add-card-form textarea {
+      width: 100%; font-family: inherit; font-size: 13px; line-height: 1.5;
+      color: var(--text); background: transparent; border: none; outline: none; resize: none;
+    }
+    .add-card-form textarea::placeholder { color: var(--text-3); }
+    .add-card-actions { display: flex; gap: 5px; margin-top: 8px; }
+
+    .home-indicator {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 3px;
+    }
+
+    /* ── Theme toggle ── */
+    .theme-btn {
+      width: 34px; height: 34px; border-radius: 50%; border: 0.5px solid var(--border);
+      background: var(--glass); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      color: var(--text-2); cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, color 0.2s; flex-shrink: 0;
+    }
+    .theme-btn:hover { background: var(--glass-2); color: var(--text); }
+
+    /* ── Light mode overrides ── */
+    [data-theme="light"] nav { background: rgba(237,232,220,0.75); border-bottom-color: rgba(0,0,0,0.08); }
+    [data-theme="light"] .nav-links a:hover { background: rgba(0,0,0,0.06); }
+    [data-theme="light"] .nav-links a.active { background: rgba(0,0,0,0.05); }
+    [data-theme="light"] .tab-btn.active { background: rgba(0,0,0,0.08); box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 2px 8px rgba(0,0,0,0.1); }
+    [data-theme="light"] .filter-pill.off { background: rgba(0,0,0,0.05); }
+    [data-theme="light"] .filter-pill.off:hover { background: rgba(0,0,0,0.09); }
+    [data-theme="light"] .tag-pill { background: rgba(0,0,0,0.05); }
+    [data-theme="light"] .tag-pill:hover { background: rgba(0,0,0,0.09); }
+    [data-theme="light"] .tag-add-btn { border-color: rgba(0,0,0,0.2); }
+    [data-theme="light"] .act-btn { background: rgba(0,0,0,0.05); }
+    [data-theme="light"] .act-btn:hover { background: rgba(0,0,0,0.09); border-color: var(--border); }
+    [data-theme="light"] .submit-btn.empty { background: rgba(0,0,0,0.06); }
+    [data-theme="light"] .canvas-card { background: rgba(255,255,255,0.5); border-color: rgba(0,0,0,0.1); }
+    [data-theme="light"] .canvas-card:hover { background: rgba(255,255,255,0.75); }
+    [data-theme="light"] .canvas-card.from-feed { background: rgba(32,96,240,0.06); border-color: rgba(32,96,240,0.18); }
+    [data-theme="light"] .area-hdr { background: rgba(255,255,255,0.35); }
+    [data-theme="light"] .area-count { background: rgba(0,0,0,0.06); }
+    [data-theme="light"] .area-tag-select { color-scheme: light; }
+    [data-theme="light"] .area-input, [data-theme="light"] .area-tag-select {
+      background: rgba(255,255,255,0.5); border-color: rgba(0,0,0,0.12); color: var(--text);
+    }
+    [data-theme="light"] .home-indicator { background: rgba(0,0,0,0.15); }
+
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      nav { padding: 0 16px; }
+      .nav-links { gap: 2px; }
+      .nav-links a { padding: 5px 9px; font-size: 12px; }
+
+      .page-header { padding: 16px 16px 0; }
+      .content { padding: 20px 16px 80px; }
+
+      .compose-body { padding: 16px 16px 12px; }
+      .tag-row { padding: 8px 16px 10px; gap: 8px; }
+      .compose-footer { padding: 8px 16px 12px; }
+
+      .post-card { padding: 14px 16px 12px; }
+      .post-actions { opacity: 1; }
+
+      .canvas-wrap { max-width: 100%; }
+      .areas-grid { grid-template-columns: 1fr; gap: 12px; }
+
+      .new-area-form { flex-wrap: wrap; }
+      .area-input { width: 100% !important; }
+
+      .hero-clock { font-size: clamp(60px, 18vw, 130px); }
+      .section-cards { flex-direction: column; gap: 10px; width: 100%; padding: 0 16px; }
+      .s-card { min-width: unset; padding: 18px 20px; }
+
+      .page { padding: 84px 20px 80px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-layer">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="grain"></div>
+
+  <nav>
+    <a class="nav-logo" href="mockup.html">Pedro<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="mockup.html">Hub</a></li>
+      <li><a href="agenda.html">Agenda</a></li>
+      <li><a href="financas.html">Finanças</a></li>
+      <li><a href="notas.html" class="active">Notas</a></li>
+    </ul>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Alternar tema">
+      <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+    </button>
+  </nav>
+
+  <div class="shell">
+    <div class="page-header">
+      <span class="page-wordmark">Notas.</span>
+      <div class="tab-toggle">
+        <button class="tab-btn" id="btn-feed"   onclick="setTab('feed')">Feed</button>
+        <button class="tab-btn" id="btn-canvas" onclick="setTab('canvas')">Canvas</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Feed -->
+      <div id="view-feed" class="feed-wrap">
+        <div class="glass compose" id="compose">
+          <div class="compose-body">
+            <textarea id="compose-text" placeholder="Capturar pensamento… #tag cria tag nova automaticamente" rows="3"></textarea>
+          </div>
+          <div class="compose-img-wrap" id="compose-img-wrap">
+            <img id="compose-img" src="" alt="">
+            <button class="compose-img-remove" onclick="removeImage()">×</button>
+          </div>
+          <div class="tag-row">
+            <span class="tag-row-label">Tag</span>
+            <div id="tag-pills"></div>
+          </div>
+          <div class="compose-footer">
+            <div class="compose-left">
+              <button class="img-btn" onclick="document.getElementById('img-input').click()">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="1" y="1" width="11" height="11" rx="2.5"/>
+                  <circle cx="4.2" cy="4.2" r="1"/>
+                  <path d="M1 9.5l2.8-2.8 2 2 2.8-3.8 3.4 4.6"/>
+                </svg>
+                imagem
+              </button>
+              <input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImageFile(this.files[0])">
+            </div>
+            <button class="submit-btn empty" id="compose-submit" onclick="submitPost()">Adicionar</button>
+          </div>
+          <div class="compose-drag-overlay" id="drag-overlay">Soltar imagem aqui</div>
+        </div>
+
+        <div class="filter-bar" id="filter-bar"></div>
+        <div id="post-list"></div>
+      </div>
+
+      <!-- Canvas -->
+      <div id="view-canvas" class="canvas-wrap" style="display:none">
+        <div class="canvas-toolbar">
+          <div id="new-area-ctrl">
+            <button class="btn-primary" onclick="showNewAreaForm()">+ Nova área</button>
+          </div>
+        </div>
+        <div class="areas-grid" id="areas-grid"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="home-indicator"></div>
+
+  <script>
+    (function() {
+      const t = localStorage.getItem('pedro_theme') || 'dark';
+      if (t === 'light') document.documentElement.setAttribute('data-theme','light');
+    })();
+
+    function toggleTheme() {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      const next = isLight ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('pedro_theme', next);
+      updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      const icon = document.getElementById('theme-icon');
+      if (!icon) return;
+      icon.innerHTML = isLight
+        ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
+        : '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+    }
+
+    document.addEventListener('DOMContentLoaded', updateThemeIcon);
+
+    const DEFAULT_TAGS = ['viagem', 'senhas', 'ideias', 'trabalho', 'pessoal'];
+    const POSTS_KEY = 'pedro_notas_posts';
+    const AREAS_KEY = 'pedro_notas_areas';
+    const TAGS_KEY  = 'pedro_notas_tags';
+
+    let currentTab   = getTabFromURL();
+    let filterTag    = null;
+    let selectedTag  = null;
+    let pendingImage = null;
+    let dragCardId   = null;
+    let dragAreaId   = null;
+
+    const loadPosts = () => { try { return JSON.parse(localStorage.getItem(POSTS_KEY)) || []; } catch { return []; } };
+    const savePosts = d  => localStorage.setItem(POSTS_KEY, JSON.stringify(d));
+    const loadAreas = () => { try { return JSON.parse(localStorage.getItem(AREAS_KEY)) || []; } catch { return []; } };
+    const saveAreas = d  => localStorage.setItem(AREAS_KEY, JSON.stringify(d));
+    function loadTags() {
+      try { const s = localStorage.getItem(TAGS_KEY); return s ? JSON.parse(s) : [...DEFAULT_TAGS]; }
+      catch { return [...DEFAULT_TAGS]; }
+    }
+    const saveTags = d => localStorage.setItem(TAGS_KEY, JSON.stringify(d));
+
+    function uid()      { return Math.random().toString(36).slice(2, 10); }
+    function esc(s)     { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function parseTag(t){ const m = t.match(/#(\w+)/); return m ? m[1].toLowerCase() : null; }
+    function ensureTag(t) { const tags = loadTags(); if (!tags.includes(t)) { tags.push(t); saveTags(tags); } }
+    function formatTime(ts) {
+      const d = (Date.now() - ts) / 1000;
+      if (d < 60)    return 'agora';
+      if (d < 3600)  return `${Math.floor(d/60)}m`;
+      if (d < 86400) return `${Math.floor(d/3600)}h`;
+      if (d < 172800) return 'ontem';
+      return new Date(ts).toLocaleDateString('pt-BR', { day:'2-digit', month:'short' });
+    }
+
+    function getTabFromURL() { return new URLSearchParams(window.location.search).get('tab') || 'feed'; }
+    function setTab(t) {
+      currentTab = t;
+      const u = new URL(window.location); u.searchParams.set('tab', t); history.pushState({}, '', u);
+      renderShell();
+    }
+    window.addEventListener('popstate', () => { currentTab = getTabFromURL(); renderShell(); });
+
+    /* ── Tag pills ── */
+    function renderTagPills() {
+      const tags = loadTags();
+      document.getElementById('tag-pills').innerHTML =
+        tags.map(t =>
+          `<button class="tag-pill${selectedTag === t ? ' selected' : ''}" onclick="selectTag('${esc(t)}')">#${esc(t)}</button>`
+        ).join('') +
+        `<button class="tag-add-btn" onclick="showTagInput()" title="Nova tag">+</button>`;
+    }
+
+    function selectTag(t) { selectedTag = selectedTag === t ? null : t; renderTagPills(); }
+
+    function showTagInput() {
+      const container = document.getElementById('tag-pills');
+      const btn = container.querySelector('.tag-add-btn');
+      const input = document.createElement('input');
+      input.className = 'tag-new-input'; input.placeholder = 'nova tag'; input.maxLength = 20;
+      btn.replaceWith(input); input.focus();
+      function commit() {
+        const val = input.value.trim().toLowerCase().replace(/^#/,'').replace(/\s+/g,'');
+        if (val) { ensureTag(val); selectedTag = val; }
+        renderTagPills();
+      }
+      input.addEventListener('blur', commit);
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); commit(); }
+        if (e.key === 'Escape') renderTagPills();
+      });
+    }
+
+    /* ── Compose ── */
+    const composeEl       = document.getElementById('compose');
+    const composeTextarea = document.getElementById('compose-text');
+    const composeSubmit   = document.getElementById('compose-submit');
+    const dragOverlay     = document.getElementById('drag-overlay');
+
+    composeTextarea.addEventListener('input', () => {
+      const detected = parseTag(composeTextarea.value);
+      if (detected) { ensureTag(detected); selectedTag = detected; renderTagPills(); }
+      composeSubmit.className = composeTextarea.value.trim() ? 'submit-btn ready' : 'submit-btn empty';
+    });
+    composeTextarea.addEventListener('focus', () => composeEl.classList.add('focused'));
+    composeTextarea.addEventListener('blur',  () => composeEl.classList.remove('focused'));
+    composeTextarea.addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); submitPost(); }
+    });
+
+    composeEl.addEventListener('dragover',  e => { e.preventDefault(); dragOverlay.classList.add('active'); });
+    composeEl.addEventListener('dragleave', e => { if (!composeEl.contains(e.relatedTarget)) dragOverlay.classList.remove('active'); });
+    composeEl.addEventListener('drop', e => {
+      e.preventDefault(); dragOverlay.classList.remove('active');
+      const f = e.dataTransfer.files[0];
+      if (f?.type.startsWith('image/')) handleImageFile(f);
+    });
+
+    function handleImageFile(file) {
+      if (!file) return;
+      const r = new FileReader();
+      r.onload = e => {
+        pendingImage = e.target.result;
+        document.getElementById('compose-img').src = pendingImage;
+        document.getElementById('compose-img-wrap').style.display = 'block';
+      };
+      r.readAsDataURL(file);
+    }
+
+    function removeImage() {
+      pendingImage = null;
+      document.getElementById('compose-img-wrap').style.display = 'none';
+      document.getElementById('compose-img').src = '';
+      document.getElementById('img-input').value = '';
+    }
+
+    function submitPost() {
+      const text = composeTextarea.value.trim();
+      if (!text) return;
+      const tag = selectedTag || parseTag(text) || null;
+      loadPosts(); // ensure fresh
+      const posts = loadPosts();
+      posts.unshift({ id: uid(), text, tag, ts: Date.now(), promoted: false, image: pendingImage });
+      savePosts(posts);
+      composeTextarea.value = '';
+      composeSubmit.className = 'submit-btn empty';
+      selectedTag = null;
+      removeImage();
+      renderTagPills();
+      renderFeed();
+    }
+
+    /* ── Feed ── */
+    function renderFeed() {
+      const posts = loadPosts();
+      const usedTags = [...new Set(posts.map(p => p.tag).filter(Boolean))];
+
+      const fb = document.getElementById('filter-bar');
+      fb.innerHTML = usedTags.length > 0
+        ? `<button class="filter-pill ${!filterTag ? 'on' : 'off'}" onclick="setFilter(null)">#todos</button>` +
+          usedTags.map(t => `<button class="filter-pill ${filterTag === t ? 'on' : 'off'}" onclick="setFilter('${esc(t)}')">#${esc(t)}</button>`).join('')
+        : '';
+
+      const visible = filterTag ? posts.filter(p => p.tag === filterTag) : posts;
+      const pl = document.getElementById('post-list');
+
+      if (!visible.length) { pl.innerHTML = '<div class="empty">Nenhuma nota ainda — escreva algo acima</div>'; return; }
+
+      const areas = loadAreas();
+      pl.innerHTML = visible.map(p => {
+        const matchingArea = p.tag ? areas.find(a => a.tag === p.tag) : null;
+        const canvasLabel  = p.promoted
+          ? '✓ canvas'
+          : matchingArea ? `→ ${esc(matchingArea.name)}` : '→ canvas';
+        return `
+          <div class="glass post-card">
+            <p class="post-text">${esc(p.text)}</p>
+            ${p.image ? `<img class="post-img" src="${p.image}" alt="">` : ''}
+            <div class="post-footer">
+              <div class="post-meta">
+                ${p.tag ? `<span class="badge badge-accent">#${esc(p.tag)}</span>` : ''}
+                <span class="post-ts">${formatTime(p.ts)}</span>
+              </div>
+              <div class="post-actions">
+                <button class="act-btn${p.promoted ? ' canvas-on' : ''}"
+                  onclick="togglePromote('${p.id}')"
+                  title="${p.promoted ? 'Remover do canvas' : 'Enviar para canvas'}"
+                >${canvasLabel}</button>
+                <button class="act-btn del" onclick="deletePost('${p.id}')">×</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function setFilter(tag) { filterTag = tag; renderFeed(); }
+    function deletePost(id) { savePosts(loadPosts().filter(p => p.id !== id)); renderFeed(); }
+    function togglePromote(id) {
+      const posts = loadPosts(), idx = posts.findIndex(p => p.id === id);
+      if (idx >= 0) posts[idx].promoted = !posts[idx].promoted;
+      savePosts(posts); renderFeed();
+    }
+
+    /* ── Canvas ── */
+    function renderCanvas() {
+      const posts = loadPosts();
+      const areas = loadAreas();
+      const grid  = document.getElementById('areas-grid');
+
+      if (!areas.length) {
+        grid.innerHTML = '<div class="empty" style="grid-column:1/-1">Crie uma área para organizar suas notas</div>';
+        return;
+      }
+
+      grid.innerHTML = areas.map(area => {
+        const promoted = area.tag ? posts.filter(p => p.promoted && p.tag === area.tag) : [];
+        const manual   = area.cards || [];
+        const total    = promoted.length + manual.length;
+        const isEmpty  = total === 0;
+
+        return `
+          <div class="glass area-card" data-area-id="${area.id}">
+            <div class="area-hdr">
+              <div class="area-hdr-left">
+                <span class="area-name" onclick="startRenameArea('${area.id}', this)">${esc(area.name)}</span>
+                ${area.tag ? `<span class="badge badge-accent" style="font-size:10px">#${esc(area.tag)}</span>` : ''}
+                ${total > 0 ? `<span class="area-count">${total}</span>` : ''}
+              </div>
+              <div class="area-hdr-actions">
+                <button class="act-btn" style="padding:3px 9px;font-size:11px" onclick="showAddCardForm('${area.id}')">+ card</button>
+                <button class="act-btn del" style="padding:3px 8px;font-size:13px" onclick="deleteArea('${area.id}')">×</button>
+              </div>
+            </div>
+            <div class="area-body" id="area-body-${area.id}">
+              ${isEmpty ? '<p style="color:var(--text-3);font-size:12px;text-align:center;padding:12px 0;font-style:italic">Nenhum item ainda</p>' : ''}
+              ${promoted.map(p => `
+                <div class="canvas-card from-feed">
+                  <span class="card-feed-label">do feed</span>
+                  <p class="canvas-card-text">${esc(p.text)}</p>
+                </div>`).join('')}
+              ${manual.map(c => `
+                <div class="canvas-card" draggable="true" data-card-id="${c.id}" data-area-id="${area.id}">
+                  <p class="canvas-card-text">${esc(c.text)}</p>
+                  <button class="canvas-card-del" onclick="deleteCard('${area.id}','${c.id}')">×</button>
+                </div>`).join('')}
+            </div>
+          </div>`;
+      }).join('');
+
+      setupDragDrop();
+    }
+
+    function startRenameArea(id, el) {
+      const area = loadAreas().find(a => a.id === id);
+      if (!area) return;
+      const input = document.createElement('input');
+      input.className = 'area-name-input'; input.value = area.name;
+      el.replaceWith(input); input.focus(); input.select();
+      function commit() {
+        const name = input.value.trim();
+        if (name) { const all = loadAreas(), i = all.findIndex(a => a.id === id); if (i >= 0) all[i].name = name; saveAreas(all); }
+        renderCanvas();
+      }
+      input.addEventListener('blur', commit);
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commit(); } if (e.key === 'Escape') renderCanvas(); });
+    }
+
+    function showAddCardForm(areaId) {
+      const body = document.getElementById(`area-body-${areaId}`);
+      if (!body) return;
+      const form = document.createElement('div');
+      form.className = 'add-card-form';
+      form.innerHTML = `
+        <textarea placeholder="Texto do card…" rows="2"></textarea>
+        <div class="add-card-actions">
+          <button class="act-btn canvas-on">Adicionar</button>
+          <button class="act-btn">Cancelar</button>
+        </div>`;
+      body.appendChild(form);
+      const ta = form.querySelector('textarea');
+      const [addBtn, cancelBtn] = form.querySelectorAll('button');
+      ta.focus();
+      function addCard() {
+        const text = ta.value.trim();
+        if (!text) { renderCanvas(); return; }
+        const all = loadAreas(), i = all.findIndex(a => a.id === areaId);
+        if (i >= 0) { all[i].cards = all[i].cards || []; all[i].cards.push({ id: uid(), text, ts: Date.now() }); saveAreas(all); }
+        renderCanvas();
+      }
+      addBtn.addEventListener('click', addCard);
+      cancelBtn.addEventListener('click', () => renderCanvas());
+      ta.addEventListener('keydown', e => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); addCard(); }
+        if (e.key === 'Escape') renderCanvas();
+      });
+    }
+
+    function deleteCard(areaId, cardId) {
+      const all = loadAreas(), i = all.findIndex(a => a.id === areaId);
+      if (i >= 0) all[i].cards = (all[i].cards || []).filter(c => c.id !== cardId);
+      saveAreas(all); renderCanvas();
+    }
+
+    function deleteArea(id) { saveAreas(loadAreas().filter(a => a.id !== id)); renderCanvas(); }
+
+    function showNewAreaForm() {
+      const tags = loadTags();
+      document.getElementById('new-area-ctrl').innerHTML = `
+        <div class="glass new-area-form">
+          <input class="area-input" id="naf-name" placeholder="Nome da área" type="text" autocomplete="off" style="width:150px">
+          <select class="area-tag-select" id="naf-tag">
+            <option value="">Sem tag</option>
+            ${tags.map(t => `<option value="${esc(t)}">#${esc(t)}</option>`).join('')}
+          </select>
+          <button class="act-btn canvas-on" style="height:36px;padding:0 14px;font-size:13px" onclick="createArea()">Criar</button>
+          <button class="act-btn" style="height:36px;padding:0 12px;font-size:13px" onclick="cancelNewArea()">×</button>
+        </div>`;
+      const ni = document.getElementById('naf-name');
+      ni.focus();
+      ni.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('naf-tag').focus(); if (e.key === 'Escape') cancelNewArea(); });
+      document.getElementById('naf-tag').addEventListener('keydown', e => { if (e.key === 'Enter') createArea(); if (e.key === 'Escape') cancelNewArea(); });
+    }
+
+    function cancelNewArea() {
+      document.getElementById('new-area-ctrl').innerHTML = '<button class="btn-primary" onclick="showNewAreaForm()">+ Nova área</button>';
+    }
+
+    function createArea() {
+      const name = document.getElementById('naf-name').value.trim();
+      if (!name) return;
+      const tag = document.getElementById('naf-tag').value || null;
+      const all = loadAreas();
+      all.push({ id: uid(), name, tag, cards: [] });
+      saveAreas(all); cancelNewArea(); renderCanvas();
+    }
+
+    /* ── Drag & drop ── */
+    function setupDragDrop() {
+      document.querySelectorAll('.canvas-card[draggable]').forEach(el => {
+        el.addEventListener('dragstart', () => { dragCardId = el.dataset.cardId; dragAreaId = el.dataset.areaId; el.style.opacity = '0.4'; });
+        el.addEventListener('dragend',   () => { el.style.opacity = ''; });
+        el.addEventListener('dragover',  e => { e.preventDefault(); el.classList.add('drag-over'); });
+        el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+        el.addEventListener('drop', e => {
+          e.preventDefault(); el.classList.remove('drag-over');
+          if (!dragCardId || dragCardId === el.dataset.cardId || dragAreaId !== el.dataset.areaId) return;
+          const all = loadAreas(), i = all.findIndex(a => a.id === el.dataset.areaId);
+          if (i < 0) return;
+          const cs = [...(all[i].cards || [])];
+          const fi = cs.findIndex(c => c.id === dragCardId), ti = cs.findIndex(c => c.id === el.dataset.cardId);
+          if (fi < 0 || ti < 0) return;
+          const [item] = cs.splice(fi, 1); cs.splice(ti, 0, item);
+          all[i].cards = cs; saveAreas(all); renderCanvas();
+        });
+      });
+    }
+
+    /* ── Shell ── */
+    function renderShell() {
+      document.getElementById('btn-feed').classList.toggle('active', currentTab === 'feed');
+      document.getElementById('btn-canvas').classList.toggle('active', currentTab === 'canvas');
+      document.getElementById('view-feed').style.display   = currentTab === 'feed'   ? '' : 'none';
+      document.getElementById('view-canvas').style.display = currentTab === 'canvas' ? '' : 'none';
+      if (currentTab === 'feed') { renderTagPills(); renderFeed(); }
+      else                       { renderCanvas(); }
+    }
+
+    renderShell();
+  </script>
+</body>
+</html>
