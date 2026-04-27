@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="theme-color" content="#0F0C0A" id="meta-theme">
+  <title>Pour Over</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:          #0F0C0A;
+      --surface:     #1A1512;
+      --surface2:    #231E1A;
+      --border:      #2D2520;
+      --coral:       #D97247;
+      --coral-light: #E8865C;
+      --coral-dark:  #B85C35;
+      --coral-glow:  rgba(217,114,71,0.15);
+      --text:        #F5EDE8;
+      --text-muted:  #9B8B83;
+      --text-dim:    #4A3F3A;
+      --green:       #7CB87A;
+      --ring-glow:   rgba(217,114,71,.5);
+      --r:           16px;
+      --r-sm:        10px;
+    }
+
+    body.light {
+      --bg:         #FAF7F4;
+      --surface:    #FFFFFF;
+      --surface2:   #F0EBE6;
+      --border:     #E2D8D1;
+      --coral-glow: rgba(217,114,71,0.10);
+      --text:       #1E1510;
+      --text-muted: #7A6860;
+      --text-dim:   #C2B0A8;
+      --ring-glow:  rgba(217,114,71,.25);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    /* ── SCREENS ── */
+    .screen {
+      display: none;
+      min-height: 100dvh;
+      flex-direction: column;
+    }
+    .screen.active { display: flex; }
+    .screen.slide-in  { animation: slideIn  .28s cubic-bezier(.4,0,.2,1); }
+    .screen.slide-out { animation: slideOut .22s cubic-bezier(.4,0,.2,1) forwards; }
+
+    @keyframes slideIn  { from { opacity:0; transform:translateX(32px) } to { opacity:1; transform:translateX(0) } }
+    @keyframes slideOut { from { opacity:1 } to { opacity:0; transform:translateX(-16px) } }
+
+    /* ── SCROLLABLE AREA ── */
+    .scroll { overflow-y:auto; flex:1; }
+
+    /* ── SHARED ── */
+    .back-btn {
+      width:40px; height:40px; border-radius:50%;
+      border:1px solid var(--border); background:var(--surface);
+      color:var(--text); display:flex; align-items:center; justify-content:center;
+      cursor:pointer; flex-shrink:0;
+    }
+    .back-btn svg { width:18px; height:18px; }
+    .back-btn:active { background:var(--surface2); transform:scale(.94); }
+
+    .label {
+      font-size:10px; font-weight:600; letter-spacing:2.5px;
+      text-transform:uppercase; color:var(--coral);
+    }
+
+    /* Theme toggle */
+    .theme-btn {
+      width:38px; height:38px; border-radius:50%;
+      border:1px solid var(--border); background:var(--surface);
+      color:var(--text-muted); cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      transition:all .2s; flex-shrink:0;
+    }
+    .theme-btn:active { transform:scale(.9); background:var(--surface2); }
+    .theme-btn svg { width:17px; height:17px; }
+
+    /* ══════════════════════════════════════
+       HOME
+    ══════════════════════════════════════ */
+    .home-head {
+      padding: 64px 24px 28px;
+    }
+    .home-head-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+    .home-head .label { margin-bottom:0; }
+    .home-head h1 {
+      font-family:'Cormorant Garamond', serif;
+      font-size:44px; font-weight:500; line-height:1.05;
+      color:var(--text); margin-bottom:10px;
+    }
+    .home-head p { font-size:14px; color:var(--text-muted); line-height:1.6; }
+
+    .recipe-list {
+      padding: 0 16px 48px;
+      display: flex; flex-direction:column; gap:12px;
+    }
+
+    .recipe-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 20px 20px 18px;
+      cursor: pointer;
+      position: relative; overflow:hidden;
+      transition: border-color .2s, transform .15s;
+    }
+    .recipe-card::after {
+      content:'';
+      position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg, var(--coral), transparent);
+      opacity:0; transition:opacity .2s;
+    }
+    .recipe-card:active { transform:scale(.975); border-color:var(--coral-dark); }
+    .recipe-card:active::after { opacity:1; }
+
+    .card-top { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+    .badge {
+      font-size:10px; font-weight:600; letter-spacing:1px;
+      text-transform:uppercase; color:var(--coral);
+      background:var(--coral-glow); padding:4px 9px; border-radius:6px;
+    }
+    .difficulty { font-size:11px; color:var(--text-muted); }
+
+    .card-title {
+      font-family:'Cormorant Garamond', serif;
+      font-size:28px; font-weight:500; color:var(--text); line-height:1;
+      margin-bottom:3px;
+    }
+    .card-author { font-size:13px; color:var(--text-muted); margin-bottom:16px; }
+
+    .card-stats { display:flex; gap:20px; }
+    .stat { display:flex; flex-direction:column; gap:2px; }
+    .stat-val { font-size:14px; font-weight:600; color:var(--text); }
+    .stat-lbl { font-size:11px; color:var(--text-muted); }
+
+    .card-chevron {
+      position:absolute; right:18px; bottom:18px; color:var(--text-dim);
+    }
+
+    /* ══════════════════════════════════════
+       RECIPE DETAIL
+    ══════════════════════════════════════ */
+    .recipe-hero {
+      padding: 56px 24px 24px;
+      background: linear-gradient(180deg, var(--surface) 0%, transparent 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .recipe-hero .back-btn { margin-bottom:18px; }
+    .recipe-hero .label { margin-bottom:6px; }
+    .recipe-hero h2 {
+      font-family:'Cormorant Garamond', serif;
+      font-size:36px; font-weight:500; line-height:1.05;
+      color:var(--text); margin-bottom:4px;
+    }
+    .recipe-hero .author { font-size:14px; color:var(--text-muted); margin-bottom:12px; }
+    .recipe-hero .desc   { font-size:14px; color:var(--text-muted); line-height:1.65; }
+
+    .recipe-body { padding:20px 16px 16px; display:flex; flex-direction:column; gap:16px; }
+
+    .section-lbl {
+      font-size:10px; font-weight:600; letter-spacing:2px;
+      text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;
+    }
+
+    /* Water card */
+    .water-card {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--r); padding:20px;
+    }
+    .water-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .water-val {
+      font-family:'Cormorant Garamond', serif;
+      font-size:52px; font-weight:400; line-height:1; color:var(--text);
+    }
+    .water-unit { font-size:16px; color:var(--text-muted); align-self:flex-end; margin-bottom:6px; margin-left:4px; }
+    .water-btns { display:flex; gap:8px; }
+    .w-btn {
+      width:44px; height:44px; border-radius:50%;
+      border:1px solid var(--border); background:var(--surface2);
+      color:var(--text); font-size:22px; line-height:1;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:all .15s;
+    }
+    .w-btn:active { background:var(--coral-dark); border-color:var(--coral-dark); transform:scale(.9); }
+
+    .coffee-hint {
+      display:flex; align-items:center; gap:10px;
+      padding:12px 14px;
+      background:var(--coral-glow);
+      border:1px solid rgba(217,114,71,.2);
+      border-radius:var(--r-sm);
+    }
+    .coffee-hint span { font-size:14px; color:var(--text-muted); }
+    .coffee-hint strong { color:var(--coral-light); font-size:15px; }
+
+    /* Steps card */
+    .steps-card {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--r); overflow:hidden;
+    }
+    .step-row {
+      display:flex; align-items:flex-start; gap:12px;
+      padding:14px 18px; border-bottom:1px solid var(--border);
+    }
+    .step-row:last-child { border-bottom:none; }
+    .step-t { font-size:13px; font-weight:600; color:var(--coral); width:34px; flex-shrink:0; font-variant-numeric:tabular-nums; }
+    .step-info { flex:1; }
+    .step-note { font-size:13px; color:var(--text); line-height:1.4; }
+    .step-water { font-size:12px; color:var(--text-muted); margin-top:2px; }
+
+    /* Notes */
+    .notes-card {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--r); padding:16px 18px;
+    }
+    .notes-card p { font-size:14px; color:var(--text-muted); line-height:1.65; }
+
+    /* Start button */
+    .start-btn {
+      margin:8px 16px 40px; width:calc(100% - 32px);
+      background:var(--coral); color:#fff; border:none;
+      border-radius:var(--r); padding:18px;
+      font-family:'DM Sans', sans-serif; font-size:16px; font-weight:600;
+      cursor:pointer; transition:all .2s; letter-spacing:.3px;
+    }
+    .start-btn:active { background:var(--coral-dark); transform:scale(.98); }
+
+    /* ══════════════════════════════════════
+       BREW TIMER
+    ══════════════════════════════════════ */
+    .brew-head {
+      padding:56px 20px 12px;
+      display:flex; align-items:center; gap:14px;
+    }
+    .brew-recipe-name { font-size:14px; color:var(--text-muted); }
+
+    .brew-body {
+      padding:0 16px;
+      display:flex; flex-direction:column; align-items:stretch;
+      flex:1; overflow-y:auto; padding-bottom:40px;
+    }
+
+    /* Ring */
+    .ring-wrap {
+      position:relative; width:220px; height:220px;
+      margin:12px auto 20px;
+    }
+    .ring-svg { width:220px; height:220px; transform:rotate(-90deg); }
+    .ring-bg { fill:none; stroke:var(--surface2); stroke-width:9; }
+    .ring-fg {
+      fill:none; stroke:var(--coral); stroke-width:9; stroke-linecap:round;
+      transition:stroke-dashoffset .4s linear;
+      filter:drop-shadow(0 0 6px var(--ring-glow));
+    }
+    .ring-inner {
+      position:absolute; inset:0;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+    }
+    .ring-time {
+      font-family:'Cormorant Garamond', serif;
+      font-size:54px; font-weight:400; line-height:1;
+      color:var(--text); font-variant-numeric:tabular-nums;
+    }
+    .ring-lbl { font-size:10px; color:var(--text-muted); letter-spacing:1.5px; text-transform:uppercase; margin-top:4px; }
+
+    /* Action card */
+    .action-card {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--r); padding:18px; margin-bottom:14px;
+      transition:border-color .3s, background .3s;
+    }
+    .action-card.alert {
+      border-color:var(--coral);
+      background:rgba(217,114,71,.07);
+      animation:cardPulse .5s ease;
+    }
+    @keyframes cardPulse {
+      0%   { transform:scale(1) }
+      40%  { transform:scale(1.025) }
+      100% { transform:scale(1) }
+    }
+
+    .action-status { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+    .action-status.on { color:var(--coral); }
+    .action-desc {
+      font-family:'Cormorant Garamond', serif;
+      font-size:26px; font-weight:500; color:var(--text); line-height:1.2; margin-bottom:10px;
+    }
+    .action-amounts { display:flex; align-items:baseline; gap:6px; }
+    .pour-ml { font-size:24px; font-weight:700; color:var(--coral); }
+    .cum-ml  { font-size:14px; color:var(--text-muted); }
+    .next-hint {
+      margin-top:12px; padding-top:12px; border-top:1px solid var(--border);
+      font-size:13px; color:var(--text-muted);
+    }
+    .next-hint span { color:var(--text); font-weight:500; }
+
+    /* Water progress */
+    .w-progress { margin-bottom:14px; }
+    .w-progress-head { display:flex; justify-content:space-between; margin-bottom:7px; }
+    .w-progress-lbl { font-size:12px; color:var(--text-muted); }
+    .w-progress-val { font-size:13px; font-weight:600; color:var(--text); }
+    .prog-bar { height:3px; background:var(--surface2); border-radius:2px; overflow:hidden; }
+    .prog-fill { height:100%; background:var(--coral); border-radius:2px; transition:width .5s ease; }
+
+    /* Brew steps list */
+    .brew-steps {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--r); overflow:hidden; margin-bottom:16px;
+    }
+    .bstep {
+      display:flex; align-items:center; gap:10px;
+      padding:12px 16px; border-bottom:1px solid var(--border);
+      transition:background .3s;
+    }
+    .bstep:last-child { border-bottom:none; }
+    .bstep.done { opacity:.45; }
+    .bstep.current { background:var(--coral-glow); }
+
+    .bstep-dot {
+      width:20px; height:20px; border-radius:50%; flex-shrink:0;
+      border:2px solid var(--border); background:transparent;
+      display:flex; align-items:center; justify-content:center;
+      transition:all .3s;
+    }
+    .bstep.done    .bstep-dot { background:var(--green); border-color:var(--green); }
+    .bstep.current .bstep-dot { border-color:var(--coral); background:rgba(217,114,71,.2); }
+    .bstep-dot svg { width:10px; height:10px; stroke:#fff; }
+
+    .bstep-time { font-size:12px; font-weight:600; color:var(--text-dim); width:30px; font-variant-numeric:tabular-nums; }
+    .bstep.current .bstep-time { color:var(--coral); }
+
+    .bstep-desc { flex:1; font-size:13px; color:var(--text-muted); }
+    .bstep.current .bstep-desc { color:var(--text); }
+
+    .bstep-ml { font-size:13px; font-weight:600; color:var(--text-dim); }
+    .bstep.current .bstep-ml { color:var(--coral-light); }
+
+    /* Controls */
+    .brew-controls { display:flex; gap:10px; }
+    .ctrl-btn {
+      flex:1; padding:16px; border-radius:var(--r);
+      font-family:'DM Sans', sans-serif; font-size:15px; font-weight:600;
+      cursor:pointer; transition:all .2s; border:1px solid var(--border);
+    }
+    .btn-pause { background:var(--coral); color:#fff; border-color:var(--coral); }
+    .btn-pause:active  { background:var(--coral-dark); }
+    .btn-stop  { background:var(--surface); color:var(--text-muted); }
+    .btn-stop:active   { background:var(--surface2); }
+
+    /* Done overlay */
+    .done-overlay {
+      display:none; position:fixed; inset:0; z-index:200;
+      background:var(--bg); flex-direction:column;
+      align-items:center; justify-content:center;
+      text-align:center; padding:40px;
+    }
+    .done-overlay.show { display:flex; animation:slideIn .5s ease; }
+    .done-icon  { font-size:72px; margin-bottom:24px; }
+    .done-title {
+      font-family:'Cormorant Garamond', serif;
+      font-size:44px; font-weight:500; margin-bottom:10px;
+    }
+    .done-sub   { font-size:15px; color:var(--text-muted); margin-bottom:40px; line-height:1.6; }
+    .done-btn   {
+      background:var(--coral); color:#fff; border:none;
+      border-radius:var(--r); padding:18px 48px;
+      font-family:'DM Sans', sans-serif; font-size:16px; font-weight:600;
+      cursor:pointer;
+    }
+    .done-btn:active { background:var(--coral-dark); }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════ HOME ══════════════════════════════ -->
+<div class="screen active" id="screen-home">
+  <div class="home-head">
+    <div class="home-head-top">
+      <div class="label">V60 · Pour Over</div>
+      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Alternar tema"></button>
+    </div>
+    <h1>Receitas<br>de Café</h1>
+    <p>Guias passo a passo dos maiores baristas e campeões mundiais.</p>
+  </div>
+  <div class="recipe-list" id="recipe-list"></div>
+</div>
+
+<!-- ══════════════════════════════ RECIPE ══════════════════════════════ -->
+<div class="screen" id="screen-recipe">
+  <div class="scroll">
+    <div class="recipe-hero">
+      <button class="back-btn" onclick="nav('screen-home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="label" id="r-badge"></div>
+      <h2 id="r-title"></h2>
+      <div class="author" id="r-author"></div>
+      <div class="desc"   id="r-desc"></div>
+    </div>
+
+    <div class="recipe-body">
+      <!-- Quantidade de água -->
+      <div>
+        <div class="section-lbl">Quantidade de Água</div>
+        <div class="water-card">
+          <div class="water-row">
+            <div style="display:flex;align-items:baseline">
+              <span class="water-val" id="water-val">300</span>
+              <span class="water-unit">ml</span>
+            </div>
+            <div class="water-btns">
+              <button class="w-btn" onclick="adjustWater(-50)">−</button>
+              <button class="w-btn" onclick="adjustWater(+50)">+</button>
+            </div>
+          </div>
+          <div class="coffee-hint">
+            <span>☕ Use <strong id="coffee-g">18g</strong> de café moído</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Passos -->
+      <div>
+        <div class="section-lbl">Passos da Receita</div>
+        <div class="steps-card" id="steps-preview"></div>
+      </div>
+
+      <!-- Notas -->
+      <div>
+        <div class="section-lbl">Notas do Método</div>
+        <div class="notes-card"><p id="r-notes"></p></div>
+      </div>
+    </div>
+  </div>
+  <button class="start-btn" onclick="startBrew()">Iniciar Preparo</button>
+</div>
+
+<!-- ══════════════════════════════ BREW ══════════════════════════════ -->
+<div class="screen" id="screen-brew">
+  <div class="brew-head">
+    <button class="back-btn" onclick="stopBrew()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <span class="brew-recipe-name" id="brew-recipe-name"></span>
+  </div>
+
+  <div class="brew-body">
+    <!-- Ring timer -->
+    <div class="ring-wrap">
+      <svg class="ring-svg" viewBox="0 0 220 220">
+        <circle class="ring-bg" cx="110" cy="110" r="98"/>
+        <circle class="ring-fg" id="ring-fg" cx="110" cy="110" r="98"/>
+      </svg>
+      <div class="ring-inner">
+        <div class="ring-time" id="ring-time">0:00</div>
+        <div class="ring-lbl">decorrido</div>
+      </div>
+    </div>
+
+    <!-- Action card -->
+    <div class="action-card" id="action-card">
+      <div class="action-status" id="action-status">PRONTO PARA INICIAR</div>
+      <div class="action-desc"  id="action-desc">Aqueça a água e posicione o coador</div>
+      <div class="action-amounts" id="action-amounts" style="display:none">
+        <span class="pour-ml" id="pour-ml"></span>
+        <span class="cum-ml"  id="cum-ml"></span>
+      </div>
+      <div class="next-hint" id="next-hint" style="display:none"></div>
+    </div>
+
+    <!-- Water progress -->
+    <div class="w-progress">
+      <div class="w-progress-head">
+        <span class="w-progress-lbl">Água adicionada</span>
+        <span class="w-progress-val"><span id="w-done">0</span>ml / <span id="w-total">300</span>ml</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- Steps list -->
+    <div class="brew-steps" id="brew-steps"></div>
+
+    <!-- Controls -->
+    <div class="brew-controls">
+      <button class="ctrl-btn btn-pause" id="pause-btn" onclick="togglePause()">Pausar</button>
+      <button class="ctrl-btn btn-stop"  onclick="stopBrew()">Encerrar</button>
+    </div>
+  </div>
+
+  <!-- Done overlay -->
+  <div class="done-overlay" id="done-overlay">
+    <div class="done-icon">☕</div>
+    <div class="done-title">Pronto!</div>
+    <p class="done-sub">Seu café está pronto.<br>Aproveite cada gole.</p>
+    <button class="done-btn" onclick="nav('screen-home')">Nova Receita</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  RECIPES DATA
+// ═══════════════════════════════════════════
+
+const RECIPES = [
+  {
+    id: 'hoffmann',
+    name: 'James Hoffmann',
+    badge: 'Campeão Mundial 2007',
+    title: 'V60 Clássico',
+    difficulty: 'Intermediário',
+    ratio: 16.67,
+    defaultWater: 500,
+    totalTime: 210,
+    description: 'O método mais acessível e equilibrado para o V60, com bloom e duas despejadas principais. Resultado limpo e bem definido.',
+    steps: [
+      { time: 0,  cumPct: 0.12, note: 'Bloom – gire suavemente e aguarde' },
+      { time: 45, cumPct: 0.60, note: 'Despeje em espiral do centro para fora' },
+      { time: 75, cumPct: 1.00, note: 'Complete o restante da água lentamente' },
+    ],
+    notes: 'Gire o coador gentilmente após o bloom para umedecer todo o pó. Mantenha a temperatura entre 92–94°C. A extração deve terminar entre 3:00 e 3:30.',
+  },
+  {
+    id: 'kasuya',
+    name: 'Tetsu Kasuya',
+    badge: 'Brewers Cup 2016',
+    title: 'Método 4:6',
+    difficulty: 'Avançado',
+    ratio: 15,
+    defaultWater: 300,
+    totalTime: 270,
+    description: 'Divide a água em 5 despejadas iguais. Os primeiros 40% controlam a doçura; os últimos 60% controlam a força. Use moagem mais grossa.',
+    steps: [
+      { time: 0,   cumPct: 0.20, note: '1ª despejada — controle de doçura' },
+      { time: 45,  cumPct: 0.40, note: '2ª despejada — controle de doçura' },
+      { time: 90,  cumPct: 0.60, note: '3ª despejada — controle de força' },
+      { time: 135, cumPct: 0.80, note: '4ª despejada — controle de força' },
+      { time: 180, cumPct: 1.00, note: '5ª despejada — controle de força' },
+    ],
+    notes: 'Use moagem mais grossa que o normal. Temperatura: 93°C. Cada despejada deve ser rápida (~10s). As pausas entre despejadas são essenciais para o resultado.',
+  },
+  {
+    id: 'rao',
+    name: 'Scott Rao',
+    badge: 'Consultor & Autor',
+    title: 'Despejada Contínua',
+    difficulty: 'Básico',
+    ratio: 16.67,
+    defaultWater: 300,
+    totalTime: 195,
+    description: 'Bloom inicial seguido de uma despejada contínua em espiral. Ideal para quem busca consistência e simplicidade no dia a dia.',
+    steps: [
+      { time: 0,  cumPct: 0.167, note: 'Bloom – mexa suavemente 10x e aguarde' },
+      { time: 30, cumPct: 1.00,  note: 'Despejada contínua em espiral até completar' },
+    ],
+    notes: 'Após a despejada contínua, dê 2 giros suaves ao coador para nivelar o pó. Temperatura: 93°C. Moagem: média-fina.',
+  },
+];
+
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+
+let current    = null;   // recipe
+let waterAmt   = 300;
+let brewSteps  = [];
+let elapsed    = 0;      // seconds (float)
+let isPaused   = false;
+let stepIdx    = -1;     // last triggered step index
+let triggered  = [];
+let interval   = null;
+
+const R        = 98;
+const CIRC     = 2 * Math.PI * R; // ≈ 615.75
+
+// ═══════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════
+
+function nav(id) {
+  const screens = document.querySelectorAll('.screen');
+  screens.forEach(s => {
+    if (s.id === id) { s.classList.add('active', 'slide-in'); setTimeout(() => s.classList.remove('slide-in'), 300); }
+    else             { s.classList.remove('active'); }
+  });
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════════
+//  HOME
+// ═══════════════════════════════════════════
+
+function renderHome() {
+  document.getElementById('recipe-list').innerHTML = RECIPES.map(r => `
+    <div class="recipe-card" onclick="openRecipe('${r.id}')">
+      <div class="card-top">
+        <span class="badge">${r.badge}</span>
+        <span class="difficulty">${r.difficulty}</span>
+      </div>
+      <div class="card-title">${r.title}</div>
+      <div class="card-author">${r.name}</div>
+      <div class="card-stats">
+        <div class="stat"><span class="stat-val">1:${r.ratio}</span><span class="stat-lbl">proporção</span></div>
+        <div class="stat"><span class="stat-val">${r.steps.length}</span><span class="stat-lbl">despejadas</span></div>
+        <div class="stat"><span class="stat-val">${fmt(r.totalTime)}</span><span class="stat-lbl">tempo</span></div>
+      </div>
+      <div class="card-chevron">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+//  RECIPE SCREEN
+// ═══════════════════════════════════════════
+
+function openRecipe(id) {
+  current   = RECIPES.find(r => r.id === id);
+  waterAmt  = current.defaultWater;
+  document.getElementById('r-badge').textContent  = current.badge;
+  document.getElementById('r-title').textContent  = current.title;
+  document.getElementById('r-author').textContent = current.name;
+  document.getElementById('r-desc').textContent   = current.description;
+  document.getElementById('r-notes').textContent  = current.notes;
+  refreshRecipe();
+  nav('screen-recipe');
+}
+
+function adjustWater(delta) {
+  waterAmt = Math.max(150, Math.min(1000, waterAmt + delta));
+  refreshRecipe();
+}
+
+function refreshRecipe() {
+  document.getElementById('water-val').textContent  = waterAmt;
+  document.getElementById('coffee-g').textContent   = Math.round(waterAmt / current.ratio) + 'g';
+  const steps = calcSteps(current, waterAmt);
+  document.getElementById('steps-preview').innerHTML = steps.map(s => `
+    <div class="step-row">
+      <span class="step-t">${fmt(s.time)}</span>
+      <div class="step-info">
+        <div class="step-note">${s.note}</div>
+        <div class="step-water">+${s.pour}ml &rarr; ${s.cumWater}ml total</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+//  BREW TIMER
+// ═══════════════════════════════════════════
+
+function calcSteps(recipe, water) {
+  let prev = 0;
+  return recipe.steps.map(s => {
+    const cumWater = Math.round(s.cumPct * water);
+    const pour     = cumWater - prev;
+    prev           = cumWater;
+    return { time: s.time, cumWater, pour, note: s.note };
+  });
+}
+
+function startBrew() {
+  brewSteps = calcSteps(current, waterAmt);
+  elapsed   = 0;
+  isPaused  = false;
+  stepIdx   = -1;
+  triggered = new Array(brewSteps.length).fill(false);
+
+  document.getElementById('brew-recipe-name').textContent = current.title;
+  document.getElementById('w-total').textContent = waterAmt;
+  document.getElementById('done-overlay').classList.remove('show');
+  document.getElementById('pause-btn').textContent = 'Pausar';
+  document.getElementById('action-amounts').style.display = 'none';
+  document.getElementById('next-hint').style.display      = 'none';
+  document.getElementById('action-status').textContent    = 'PRONTO PARA INICIAR';
+  document.getElementById('action-status').classList.remove('on');
+  document.getElementById('action-desc').textContent      = 'Aqueça a água e posicione o coador';
+
+  // Init ring
+  const ring = document.getElementById('ring-fg');
+  ring.style.strokeDasharray  = CIRC;
+  ring.style.strokeDashoffset = CIRC;
+
+  renderBrewSteps();
+  nav('screen-brew');
+  if (interval) clearInterval(interval);
+  interval = setInterval(tick, 100);
+}
+
+function tick() {
+  if (isPaused) return;
+  elapsed += 0.1;
+  checkTriggers();
+  updateTimer();
+}
+
+function checkTriggers() {
+  for (let i = 0; i < brewSteps.length; i++) {
+    if (!triggered[i] && elapsed >= brewSteps[i].time) {
+      triggered[i] = true;
+      stepIdx = i;
+      onStepTriggered(i);
+    }
+  }
+}
+
+function onStepTriggered(i) {
+  if (navigator.vibrate) navigator.vibrate([180, 80, 180]);
+
+  const card = document.getElementById('action-card');
+  card.classList.add('alert');
+  setTimeout(() => card.classList.remove('alert'), 700);
+
+  updateActionCard();
+  renderBrewSteps();
+}
+
+function updateActionCard() {
+  if (stepIdx < 0) return;
+  const step  = brewSteps[stepIdx];
+  const next  = brewSteps[stepIdx + 1];
+
+  document.getElementById('action-status').textContent = 'DESPEJE AGORA';
+  document.getElementById('action-status').classList.add('on');
+  document.getElementById('action-desc').textContent   = step.note;
+
+  const amtEl = document.getElementById('action-amounts');
+  amtEl.style.display = 'flex';
+  document.getElementById('pour-ml').textContent = '+' + step.pour + 'ml';
+  document.getElementById('cum-ml').textContent  = '→ ' + step.cumWater + 'ml total';
+
+  const hintEl = document.getElementById('next-hint');
+  if (next) {
+    hintEl.style.display  = 'block';
+    hintEl.innerHTML      = 'Próxima despejada às <span>' + fmt(next.time) + '</span>';
+  } else {
+    hintEl.style.display  = 'block';
+    hintEl.innerHTML      = 'Última despejada — aguarde a extração completar';
+  }
+}
+
+function updateTimer() {
+  const s = Math.floor(elapsed);
+  document.getElementById('ring-time').textContent = fmt(s);
+
+  // Ring progress (overall)
+  const pct    = Math.min(1, elapsed / current.totalTime);
+  const offset = CIRC * (1 - pct);
+  document.getElementById('ring-fg').style.strokeDashoffset = offset;
+
+  // Water done = last triggered step's cumWater
+  const waterDone = stepIdx >= 0 ? brewSteps[stepIdx].cumWater : 0;
+  document.getElementById('w-done').textContent  = waterDone;
+  document.getElementById('prog-fill').style.width = ((waterDone / waterAmt) * 100) + '%';
+
+  // Done
+  if (elapsed >= current.totalTime) {
+    clearInterval(interval);
+    interval = null;
+    setTimeout(() => document.getElementById('done-overlay').classList.add('show'), 600);
+  }
+}
+
+function renderBrewSteps() {
+  document.getElementById('brew-steps').innerHTML = brewSteps.map((s, i) => {
+    const isDone    = triggered[i] && i < stepIdx;
+    const isCurrent = triggered[i] && i === stepIdx;
+    const cls       = isDone ? 'done' : isCurrent ? 'current' : '';
+    const dotDone   = isDone ? 'done' : isCurrent ? 'current' : '';
+    const check     = isDone
+      ? `<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`
+      : '';
+    return `
+      <div class="bstep ${cls}">
+        <div class="bstep-dot ${dotDone}">${check}</div>
+        <span class="bstep-time">${fmt(s.time)}</span>
+        <span class="bstep-desc">${s.note}</span>
+        <span class="bstep-ml">${s.cumWater}ml</span>
+      </div>`;
+  }).join('');
+}
+
+function togglePause() {
+  isPaused = !isPaused;
+  document.getElementById('pause-btn').textContent = isPaused ? 'Retomar' : 'Pausar';
+}
+
+function stopBrew() {
+  if (interval) { clearInterval(interval); interval = null; }
+  elapsed  = 0;
+  isPaused = false;
+  nav('screen-home');
+}
+
+// ═══════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════
+
+function fmt(sec) {
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return m + ':' + String(s).padStart(2, '0');
+}
+
+// ═══════════════════════════════════════════
+//  THEME
+// ═══════════════════════════════════════════
+
+const MOON_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+const SUN_ICON  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+
+function applyTheme(light) {
+  document.body.classList.toggle('light', light);
+  document.getElementById('meta-theme').content = light ? '#FAF7F4' : '#0F0C0A';
+  document.getElementById('theme-btn').innerHTML = light ? MOON_ICON : SUN_ICON;
+}
+
+function toggleTheme() {
+  const isLight = !document.body.classList.contains('light');
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  applyTheme(isLight);
+}
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+
+applyTheme(localStorage.getItem('theme') === 'light');
+renderHome();
+</script>
+</body>
+</html>
