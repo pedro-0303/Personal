@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#15171A">
+<title>FERRO — registro de treino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#15171A;
+    --surface:#1E2125;
+    --surface-2:#262A2F;
+    --border:#2F343A;
+    --text:#ECEAE3;
+    --dim:#8A9098;
+    --dim-2:#5C636B;
+    --brasa:#FF7A3D;
+    --brasa-soft:rgba(255,122,61,0.14);
+    --brasa-line:rgba(255,122,61,0.35);
+    --cond:'Oswald','Arial Narrow',sans-serif;
+    --body:'Inter',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --safe-b:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{background:var(--bg);color:var(--text);font-family:var(--body);}
+  body{padding-bottom:calc(150px + var(--safe-b));overflow-x:hidden;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+  input{font-family:inherit;}
+  :focus-visible{outline:2px solid var(--brasa);outline-offset:2px;border-radius:4px;}
+
+  /* HEADER */
+  header{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,var(--bg) 70%,rgba(21,23,26,0.92));
+    border-bottom:1px solid var(--border);padding:14px 18px 0;backdrop-filter:blur(6px);}
+  .brandrow{display:flex;align-items:baseline;justify-content:space-between;gap:12px;}
+  .brand{font-family:var(--cond);font-weight:700;font-size:30px;letter-spacing:2px;line-height:1;
+    text-transform:uppercase;}
+  .brand .dot{color:var(--brasa);}
+  .brand small{display:block;font-family:var(--body);font-weight:500;font-size:9px;letter-spacing:3px;
+    color:var(--dim-2);text-transform:uppercase;margin-top:3px;}
+  .resetbtn{font-family:var(--cond);font-weight:500;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--dim);border:1px solid var(--border);padding:7px 11px;border-radius:6px;}
+  .resetbtn:active{background:var(--surface-2);}
+
+  /* PROGRESS */
+  .progwrap{margin-top:13px;display:flex;align-items:center;gap:10px;}
+  .progtrack{flex:1;height:5px;background:var(--surface-2);border-radius:3px;overflow:hidden;}
+  .progfill{height:100%;width:0;background:var(--brasa);border-radius:3px;transition:width .35s ease;}
+  .progtxt{font-family:var(--mono);font-weight:500;font-size:12px;color:var(--dim);min-width:46px;text-align:right;}
+
+  /* TABS */
+  .tabs{display:flex;gap:7px;margin-top:13px;overflow-x:auto;padding-bottom:13px;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{flex:0 0 auto;min-width:58px;padding:8px 4px 7px;border-radius:9px;background:var(--surface);
+    border:1px solid var(--border);text-align:center;transition:background .15s,border-color .15s;}
+  .tab .l{font-family:var(--cond);font-weight:700;font-size:22px;line-height:1;display:block;color:var(--dim);}
+  .tab .n{font-family:var(--body);font-weight:600;font-size:8.5px;letter-spacing:.8px;text-transform:uppercase;
+    color:var(--dim-2);display:block;margin-top:4px;}
+  .tab.active{background:var(--brasa-soft);border-color:var(--brasa-line);}
+  .tab.active .l{color:var(--brasa);}
+  .tab.active .n{color:var(--brasa);}
+
+  /* WORKOUT HEAD */
+  main{padding:20px 18px 0;max-width:680px;margin:0 auto;}
+  .whead{margin-bottom:18px;}
+  .wtitle{font-family:var(--cond);font-weight:700;font-size:38px;line-height:0.95;text-transform:uppercase;
+    letter-spacing:0.5px;}
+  .wsub{font-family:var(--body);font-weight:500;font-size:13px;color:var(--dim);margin-top:6px;letter-spacing:.2px;}
+
+  /* EXERCISE CARD */
+  .ex{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px 15px 7px;
+    margin-bottom:13px;}
+  .exhead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:13px;}
+  .exname{font-family:var(--cond);font-weight:600;font-size:20px;line-height:1.05;text-transform:uppercase;
+    letter-spacing:.3px;}
+  .exscheme{font-family:var(--mono);font-weight:700;font-size:12px;color:var(--brasa);white-space:nowrap;
+    background:var(--brasa-soft);padding:5px 9px;border-radius:6px;margin-top:1px;}
+  .exnote{font-family:var(--body);font-weight:400;font-size:11.5px;color:var(--dim-2);margin-top:4px;font-style:italic;}
+
+  /* SET ROW */
+  .setrow{display:grid;grid-template-columns:34px 1fr 1fr 52px;align-items:center;gap:9px;
+    padding:7px 0;border-top:1px solid var(--border);}
+  .setrow:first-of-type{border-top:none;}
+  .setn{font-family:var(--cond);font-weight:600;font-size:17px;color:var(--dim-2);text-align:center;}
+  .setrow.done .setn{color:var(--brasa);}
+  .field{display:flex;flex-direction:column;gap:3px;}
+  .field label{font-family:var(--body);font-weight:600;font-size:8px;letter-spacing:1px;text-transform:uppercase;
+    color:var(--dim-2);padding-left:2px;}
+  .field input{width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
+    color:var(--text);font-family:var(--mono);font-weight:700;font-size:16px;padding:9px 8px;text-align:center;
+    transition:border-color .15s;}
+  .field input::placeholder{color:var(--dim-2);font-weight:500;}
+  .field input:focus{border-color:var(--brasa-line);background:#2a2e34;}
+  .target{font-family:var(--mono);font-weight:500;font-size:14px;color:var(--dim);text-align:center;
+    padding-top:13px;}
+  .check{width:52px;height:46px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;align-self:end;transition:all .15s;}
+  .check svg{width:22px;height:22px;stroke:var(--dim-2);fill:none;stroke-width:2.5;
+    stroke-linecap:round;stroke-linejoin:round;transition:stroke .15s;}
+  .check:active{transform:scale(0.93);}
+  .setrow.done .check{background:var(--brasa);border-color:var(--brasa);}
+  .setrow.done .check svg{stroke:#15171A;}
+  .setrow.done .field input{border-color:var(--brasa-line);}
+
+  /* REST TIMER */
+  .rest{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);
+    border-top:1px solid var(--border);padding:11px 18px calc(11px + var(--safe-b));
+    box-shadow:0 -8px 24px rgba(0,0,0,0.4);}
+  .restinner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:14px;}
+  .restdisplay{font-family:var(--mono);font-weight:700;font-size:40px;line-height:1;letter-spacing:1px;
+    min-width:118px;font-variant-numeric:tabular-nums;}
+  .restdisplay.run{color:var(--brasa);}
+  .restdisplay.zero{color:var(--brasa);animation:flash .5s steps(2) 4;}
+  @keyframes flash{50%{opacity:.25;}}
+  .restmid{flex:1;display:flex;flex-direction:column;gap:7px;min-width:0;}
+  .presets{display:flex;gap:6px;}
+  .preset{flex:1;font-family:var(--mono);font-weight:700;font-size:13px;padding:7px 0;border-radius:7px;
+    background:var(--surface-2);border:1px solid var(--border);color:var(--dim);transition:all .15s;}
+  .preset.sel{background:var(--brasa-soft);border-color:var(--brasa-line);color:var(--brasa);}
+  .preset:active{transform:scale(0.95);}
+  .restctrl{display:flex;gap:8px;}
+  .ctrlbtn{flex:1;font-family:var(--cond);font-weight:600;font-size:14px;letter-spacing:1.5px;
+    text-transform:uppercase;padding:9px 0;border-radius:8px;background:var(--surface-2);
+    border:1px solid var(--border);color:var(--text);transition:all .15s;}
+  .ctrlbtn.primary{background:var(--brasa);color:#15171A;border-color:var(--brasa);}
+  .ctrlbtn:active{transform:scale(0.96);}
+  .restlabel{font-family:var(--body);font-weight:600;font-size:8px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--dim-2);margin-bottom:-1px;}
+
+  @media (max-width:380px){
+    .restdisplay{font-size:34px;min-width:96px;}
+    .wtitle{font-size:32px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brandrow">
+    <div class="brand">FERRO<span class="dot">.</span><small>registro de treino</small></div>
+    <button class="resetbtn" id="resetBtn">Zerar dia</button>
+  </div>
+  <div class="progwrap">
+    <div class="progtrack"><div class="progfill" id="progFill"></div></div>
+    <div class="progtxt" id="progTxt">0/0</div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+
+<main>
+  <div class="whead">
+    <h1 class="wtitle" id="wTitle"></h1>
+    <p class="wsub" id="wSub"></p>
+  </div>
+  <div id="exList"></div>
+</main>
+
+<div class="rest">
+  <div class="restinner">
+    <div class="restdisplay" id="display">2:00</div>
+    <div class="restmid">
+      <div class="restlabel">Descanso</div>
+      <div class="presets" id="presets"></div>
+      <div class="restctrl">
+        <button class="ctrlbtn primary" id="startBtn">Iniciar</button>
+        <button class="ctrlbtn" id="resetTimerBtn">Zerar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const WORKOUTS = {
+  A:{title:"Upper",sub:"Tronco geral · peito · costas · ombro · braço",ex:[
+    {n:"Supino reto barra",scheme:"4×6-8",sets:4,target:"6-8"},
+    {n:"Remada curvada barra",scheme:"4×8-10",sets:4,target:"8-10"},
+    {n:"Desenvolvimento halteres",scheme:"3×8-10",sets:3,target:"8-10"},
+    {n:"Puxada alta pronada",scheme:"3×10-12",sets:3,target:"10-12"},
+    {n:"Crucifixo máquina (peck deck)",scheme:"3×12-15",sets:3,target:"12-15"},
+    {n:"Rosca direta",scheme:"3×10-12",sets:3,target:"10-12"},
+    {n:"Tríceps corda",scheme:"3×12-15",sets:3,target:"12-15"},
+    {n:"Abdominal infra / prancha",scheme:"3 séries",sets:3,target:"falha",bw:true},
+  ]},
+  B:{title:"Lower",sub:"Perna completa · quadríceps · posterior · glúteo",ex:[
+    {n:"Agachamento livre",scheme:"4×6-8",sets:4,target:"6-8"},
+    {n:"Terra romeno (RDL)",scheme:"3×8-10",sets:3,target:"8-10"},
+    {n:"Leg press",scheme:"3×10-12",sets:3,target:"10-12"},
+    {n:"Cadeira flexora",scheme:"3×10-12",sets:3,target:"10-12"},
+    {n:"Cadeira extensora",scheme:"3×12-15",sets:3,target:"12-15"},
+    {n:"Panturrilha em pé",scheme:"4×12-20",sets:4,target:"12-20"},
+  ]},
+  C:{title:"Push",sub:"Peito · ombro · tríceps",ex:[
+    {n:"Supino inclinado halteres",scheme:"4×8-10",sets:4,target:"8-10"},
+    {n:"Desenvolvimento máquina/halteres",scheme:"3×8-10",sets:3,target:"8-10"},
+    {n:"Crossover ou supino máquina",scheme:"3×10-12",sets:3,target:"10-12"},
+    {n:"Elevação lateral",scheme:"4×12-15",sets:4,target:"12-15"},
+    {n:"Tríceps testa ou paralelas",scheme:"3×8-10",sets:3,target:"8-10"},
+    {n:"Tríceps corda",scheme:"3×12-15",sets:3,target:"12-15"},
+    {n:"Abdominal polia alta (crunch ajoelhado)",scheme:"3×12-15",sets:3,target:"12-15"},
+  ]},
+  D:{title:"Pull",sub:"Costas · bíceps · posterior de ombro",ex:[
+    {n:"Barra fixa ou puxada pronada",scheme:"4×8-10",sets:4,target:"8-10"},
+    {n:"Remada cavalinho (T-bar) ou serrote",scheme:"4×8-10",sets:4,target:"8-10"},
+    {n:"Remada baixa cabo",scheme:"3×10-12",sets:3,target:"10-12"},
+    {n:"Face pull",scheme:"3×15-20",sets:3,target:"15-20"},
+    {n:"Rosca scott",scheme:"3×8-10",sets:3,target:"8-10"},
+    {n:"Rosca martelo",scheme:"3×10-12",sets:3,target:"10-12"},
+    {n:"Prancha lateral / russian twist",scheme:"3 séries",sets:3,target:"lado",bw:true},
+  ]},
+  E:{title:"Hotel",sub:"Peso do corpo · full body · sem equipamento",ex:[
+    {n:"Flexão de braço",scheme:"4 séries",sets:4,target:"~falha",bw:true,note:"desça em 3s, pés na cama p/ peito superior"},
+    {n:"Pike push-up",scheme:"3 séries",sets:3,target:"~falha",bw:true,note:"quadril alto, pés elevados deixa mais difícil"},
+    {n:"Agachamento búlgaro",scheme:"3× cada perna",sets:3,target:"cada",bw:true,note:"pé de trás na borda da cama (não na cadeira)"},
+    {n:"Afundo caminhando",scheme:"3× cada perna",sets:3,target:"cada",bw:true},
+    {n:"Ponte de glúteo unilateral",scheme:"3× cada",sets:3,target:"cada",bw:true},
+    {n:"Remada na mesa ou superman",scheme:"3 séries",sets:3,target:"~falha",bw:true},
+    {n:"Mergulho tríceps na borda da cama",scheme:"3 séries",sets:3,target:"~falha",bw:true},
+    {n:"Prancha + mountain climber",scheme:"3 rodadas",sets:3,target:"rodada",bw:true},
+  ]},
+};
+
+const PRESETS=[60,90,120,180];
+const KEY="ferro_v1";
+let state=JSON.parse(localStorage.getItem(KEY)||"{}");
+let current=state._last||"A";
+function save(){localStorage.setItem(KEY,JSON.stringify(state));}
+function cell(t,e,s,f){return `${t}|${e}|${s}|${f}`;}
+function get(k){return state[k];}
+function set(k,v){if(v===""||v==null){delete state[k];}else{state[k]=v;}save();}
+
+// ---- RENDER ----
+const tabsEl=document.getElementById("tabs");
+Object.keys(WORKOUTS).forEach(k=>{
+  const b=document.createElement("button");
+  b.className="tab";b.dataset.k=k;
+  b.innerHTML=`<span class="l">${k}</span><span class="n">${WORKOUTS[k].title}</span>`;
+  b.onclick=()=>{current=k;state._last=k;save();render();};
+  tabsEl.appendChild(b);
+});
+
+function render(){
+  const w=WORKOUTS[current];
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.k===current));
+  document.getElementById("wTitle").textContent="Treino "+current+" — "+w.title;
+  document.getElementById("wSub").textContent=w.sub;
+  const list=document.getElementById("exList");
+  list.innerHTML="";
+  w.ex.forEach((ex,ei)=>{
+    const card=document.createElement("div");card.className="ex";
+    const unit=ex.bw?"reps":"kg";
+    let rows="";
+    for(let si=0;si<ex.sets;si++){
+      const dk=cell(current,ei,si,"done"), lk=cell(current,ei,si,"load");
+      const done=get(dk)?"done":"";
+      const load=get(lk)||"";
+      rows+=`<div class="setrow ${done}" data-dk="${dk}">
+        <div class="setn">${si+1}</div>
+        <div class="field"><label>${unit}</label>
+          <input inputmode="decimal" data-lk="${lk}" value="${load}" placeholder="${ex.bw?'–':'0'}"></div>
+        <div class="target">${ex.target}</div>
+        <button class="check" data-dk="${dk}" aria-label="Marcar série ${si+1}">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
+      </div>`;
+    }
+    card.innerHTML=`<div class="exhead"><div><div class="exname">${ex.n}</div>
+      ${ex.note?`<div class="exnote">${ex.note}</div>`:""}</div>
+      <div class="exscheme">${ex.scheme}</div></div>${rows}`;
+    list.appendChild(card);
+  });
+  // wire inputs
+  list.querySelectorAll("input").forEach(inp=>{
+    inp.addEventListener("change",()=>set(inp.dataset.lk,inp.value.trim()));
+  });
+  // wire checks
+  list.querySelectorAll(".check").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const dk=btn.dataset.dk;
+      const row=btn.closest(".setrow");
+      const nowDone=!get(dk);
+      set(dk,nowDone?1:0);
+      row.classList.toggle("done",nowDone);
+      updateProgress();
+      if(nowDone){startTimer();}
+    });
+  });
+  updateProgress();
+}
+
+function updateProgress(){
+  const w=WORKOUTS[current];
+  let total=0,done=0;
+  w.ex.forEach((ex,ei)=>{for(let si=0;si<ex.sets;si++){total++;if(get(cell(current,ei,si,"done")))done++;}});
+  document.getElementById("progFill").style.width=(total?done/total*100:0)+"%";
+  document.getElementById("progTxt").textContent=done+"/"+total;
+}
+
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  const w=WORKOUTS[current];
+  if(!confirm("Zerar as séries marcadas do Treino "+current+"? As cargas registradas continuam salvas."))return;
+  w.ex.forEach((ex,ei)=>{for(let si=0;si<ex.sets;si++){delete state[cell(current,ei,si,"done")];}});
+  save();render();
+});
+
+// ---- REST TIMER ----
+let restSel=state._preset||120, remaining=restSel, ticking=false, iv=null;
+const display=document.getElementById("display");
+const presetsEl=document.getElementById("presets");
+const startBtn=document.getElementById("startBtn");
+
+PRESETS.forEach(p=>{
+  const b=document.createElement("button");
+  b.className="preset"+(p===restSel?" sel":"");
+  b.textContent=p<60?p+"s":(p/60)+(p%60?":"+String(p%60).padStart(2,"0"):"")+"m";
+  if(p===60)b.textContent="1m";if(p===90)b.textContent="1:30";if(p===120)b.textContent="2m";if(p===180)b.textContent="3m";
+  b.onclick=()=>{restSel=p;state._preset=p;save();if(!ticking){remaining=p;paint();}
+    presetsEl.querySelectorAll(".preset").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");};
+  presetsEl.appendChild(b);
+});
+
+function fmt(s){const m=Math.floor(s/60);return m+":"+String(s%60).padStart(2,"0");}
+function paint(){display.textContent=fmt(Math.max(0,remaining));
+  display.classList.toggle("run",ticking&&remaining>0);
+  display.classList.toggle("zero",remaining<=0);}
+function startTimer(){remaining=restSel;ticking=true;startBtn.textContent="Pausar";paint();
+  clearInterval(iv);iv=setInterval(tick,1000);}
+function tick(){remaining--;paint();if(remaining<=0){clearInterval(iv);ticking=false;startBtn.textContent="Iniciar";beep();}}
+startBtn.addEventListener("click",()=>{
+  if(ticking){clearInterval(iv);ticking=false;startBtn.textContent="Continuar";paint();}
+  else{if(remaining<=0)remaining=restSel;ticking=true;startBtn.textContent="Pausar";paint();
+    clearInterval(iv);iv=setInterval(tick,1000);}
+});
+document.getElementById("resetTimerBtn").addEventListener("click",()=>{
+  clearInterval(iv);ticking=false;remaining=restSel;startBtn.textContent="Iniciar";
+  display.classList.remove("zero");paint();});
+
+function beep(){
+  if(navigator.vibrate)navigator.vibrate([200,90,200,90,300]);
+  try{const c=new(window.AudioContext||window.webkitAudioContext)();
+    [0,0.18,0.36].forEach(t=>{const o=c.createOscillator(),g=c.createGain();
+      o.connect(g);g.connect(c.destination);o.frequency.value=880;o.type="sine";
+      g.gain.setValueAtTime(0.001,c.currentTime+t);
+      g.gain.exponentialRampToValueAtTime(0.4,c.currentTime+t+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+t+0.15);
+      o.start(c.currentTime+t);o.stop(c.currentTime+t+0.16);});
+  }catch(e){}
+}
+
+paint();render();
+</script>
+</body>
+</html>

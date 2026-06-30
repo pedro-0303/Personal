@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/",      "destination": "/mockup.html" },
     { "source": "/coffee",      "destination": "/coffee.html" },
-    { "source": "/figurinhas", "destination": "/figurinhas.html" }
+    { "source": "/figurinhas", "destination": "/figurinhas.html" },
+    { "source": "/ferro", "destination": "/ferro.html" }
   ]
 }
